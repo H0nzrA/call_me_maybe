@@ -6,6 +6,7 @@ readme 			= "README.md"
 requires-python	= ">=3.13"
 dependencies	= [
     "flake8>=7.3.0",
+    "llm-sdk",
     "mypy>=2.1.0",
     "pydantic>=2.13.4",
     "pydocstyle>=6.3.0",
@@ -14,3 +15,11 @@ dependencies	= [
 [[project.authors]]
 name	= "Teddy Andrianina"
 email	= "trakotoz@student.42antananarivo.mg"
+
+[tool.uv.workspace]
+members = [
+    "llm_sdk",
+]
+
+[tool.uv.sources]
+llm-sdk = { workspace = true }

@@ -19,3 +19,6 @@ __pycache__/
 
 # Neovim configuration
 pyrightconfig.json
+
+# Project General
+.huggingface

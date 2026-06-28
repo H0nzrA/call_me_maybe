@@ -1,0 +1,18 @@
+# Virtual environment
+.venv-call_me_maybe/
+.venv/
+venv/
+.env/
+env/
+
+# UV generated files on initalization
+.python-version
+.cache/
+cache/
+
+# Lint
+.mypy_cache
+
+# Python generated files
+__pycache__/
+*.pyc

@@ -6,7 +6,7 @@
 #    By: trakotoz <trakotoz@student.42antananarivo  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/06/28 15:03:02 by trakotoz          #+#    #+#              #
-#    Updated: 2026/06/28 17:08:10 by trakotoz         ###   ########.fr        #
+#    Updated: 2026/06/28 18:25:38 by trakotoz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -92,24 +92,18 @@ re			: fclean all
 
 lint		: install
 	@ echo "$(C_MAGENTA)- Project readability, lint standard$(C_RESET)"
-	@ $(URUN) flake8 . --exclude=$(VENV),$(SDK),$(CACHE)
-	@ $(URUN) mypy . \
+	@ $(URUN) flake8 $(SRC)
+	@ $(URUN) mypy $(SRC) \
 		--warn-return-any \
 		--warn-unused-ignores \
 		--ignore-missing-imports \
 		--disallow-untyped-defs \
-		--check-untyped-defs \
-		--exclude=$(SDK) \
-		--exclude=$(VENV) \
-		--exclude=$(CACHE)
+		--check-untyped-defs
 
 lint-strict	: install
 	@ echo "$(C_MAGENTA)- Project readability, lint strict$(C_RESET)"
-	@ $(URUN) flake8 . --exclude=$(VENV),$(SDK),$(CACHE)
-	@ $(URUN) mypy . --strict \
-		--exclude=$(SDK) \
-		--exclude=$(VENV) \
-		--exclude=$(CACHE)
+	@ $(URUN) flake8 $(SRC)
+	@ $(URUN) mypy --strict $(SRC)
 
 add			:
 	@ echo "$(C_MAGENTA)- Adding dependencies$(C_RESET)"

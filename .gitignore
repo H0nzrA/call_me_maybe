@@ -16,3 +16,6 @@ cache/
 # Python generated files
 __pycache__/
 *.pyc
+
+# Neovim configuration
+pyrightconfig.json

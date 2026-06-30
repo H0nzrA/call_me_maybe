@@ -1,6 +1,7 @@
 from .contrained.parsing import Parsing
 from .contrained.cli import CLI
 
+
 class Program:
     def __init__(self) -> None:
         pass
@@ -8,10 +9,12 @@ class Program:
     def run(self) -> None:
         cli = CLI()
         pars = Parsing(
-            definition=cli.get_io_file().definition,
-            calling=cli.get_io_file().calling
+            definition=cli.get_io_file()["definition"],
+            calling=cli.get_io_file()["calling"],
+            result=cli.get_io_file()["result"]
         )
         val = pars.get_file_content()
+        print(val)
 
 
 if __name__ == "__main__":

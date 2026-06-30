@@ -1,8 +1,8 @@
 import sys
 from collections.abc import Iterator
 from enum import Enum
-
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+from pathlib import Path
 
 
 class CLIError(Exception):
@@ -10,6 +10,8 @@ class CLIError(Exception):
 
 
 class IOFile(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     definition: str
     calling: str
     result: str
@@ -67,7 +69,10 @@ class CLI:
 
             except StopIteration:
                 raise CLIError(f"No value given for flag {arg!r}")
-        print(self.io_file)
 
-    def get_io_file(self) -> IOFile:
-        return self.io_file
+    def get_io_file(self) -> dict[str, Path]:
+        return {
+            "definition": Path(self.io_file.definition),
+            "calling": Path(self.io_file.calling),
+            "result": Path(self.io_file.result)
+        }

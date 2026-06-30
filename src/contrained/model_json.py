@@ -3,19 +3,19 @@ from typing import Any
 
 
 class Type(BaseModel):
-    ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid")
 
     type: str
 
 
 class Calling(BaseModel):
-    ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid")
 
     prompt: str
 
 
 class Definition(BaseModel):
-    ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid")
 
     name: str
     parameters: dict[str, Type]
@@ -24,7 +24,7 @@ class Definition(BaseModel):
 
 
 class Result(BaseModel):
-    ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid")
 
     prompt: str
     name: str

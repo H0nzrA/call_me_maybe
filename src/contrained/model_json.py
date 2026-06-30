@@ -11,7 +11,7 @@ class Type(BaseModel):
 class Calling(BaseModel):
     ConfigDict(extra="forbid")
 
-    prompt:str
+    prompt: str
 
 
 class Definition(BaseModel):

@@ -33,8 +33,8 @@ class IOFlags(Enum):
 class CLI:
     def __init__(self) -> None:
         self.io_file: IOFile = IOFile(
-            definition="data/input/functions_definitions.json",
-            calling="data/input/function_calling_test.json",
+            definition="data/input/functions_definition.json",
+            calling="data/input/function_calling_tests.json",
             result="data/output/function_calling_results.json"
         )
 
@@ -57,7 +57,10 @@ class CLI:
             try:
                 value: str = next(it)
                 if value in self.__flags_map:
-                    raise CLIError(f"Having another flag {value!r} not argument")
+                    raise CLIError(
+                        "Having another flag "
+                        f"{value!r} not argument"
+                    )
 
                 field: IOFlags = self.__flags_map[arg]
                 setattr(self.io_file, field.name, value)
@@ -65,3 +68,6 @@ class CLI:
             except StopIteration:
                 raise CLIError(f"No value given for flag {arg!r}")
         print(self.io_file)
+
+    def get_io_file(self) -> IOFile:
+        return self.io_file

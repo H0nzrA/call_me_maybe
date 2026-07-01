@@ -3,6 +3,7 @@ from collections.abc import Iterator
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
 from pathlib import Path
+from ..utils import PathData
 
 
 class ArgsError(Exception):
@@ -70,9 +71,9 @@ class Argument:
             except StopIteration:
                 raise ArgsError(f"No value given for flag {arg!r}")
 
-    def get_io_file(self) -> dict[str, Path]:
-        return {
-            "definition": Path(self.io_file.definition),
-            "calling": Path(self.io_file.calling),
-            "result": Path(self.io_file.result)
-        }
+    def get_io_file(self) -> PathData:
+        return PathData(
+            definition=Path(self.io_file.definition),
+            calling=Path(self.io_file.calling),
+            result=Path(self.io_file.result)
+        )

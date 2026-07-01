@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 from pathlib import Path
-from .model_json import Definition, Calling, ParsedData
+from .models import Definition, Calling, ParsedData, PathData
 import json
 from typing import Any
 
@@ -8,9 +8,7 @@ from typing import Any
 class Parsing(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    definition: Path
-    calling: Path
-    result: Path
+    path_data: PathData
 
     _content_definition: list[Definition] = PrivateAttr(default_factory=list)
     _content_calling: list[Calling] = PrivateAttr(default_factory=list)
@@ -19,19 +17,19 @@ class Parsing(BaseModel):
         data: list[dict[str, Any]] = []
 
         # Parsing Definition
-        with self.definition.open("r") as f:
+        with self.path_data.definition.open("r") as f:
             data = json.load(f)
         for d in data:
             self._content_definition.append(Definition(**d))
 
         # Parsing Calling Test
-        with self.calling.open("r") as f:
+        with self.path_data.calling.open("r") as f:
             data = json.load(f)
         for d in data:
             self._content_calling.append(Calling(**d))
 
         # Make sure Parent output dir is created
-        path = self.result.parent
+        path = self.path_data.result.parent
         path.mkdir(parents=True, exist_ok=True)
 
     def get_file_content(self) -> ParsedData:

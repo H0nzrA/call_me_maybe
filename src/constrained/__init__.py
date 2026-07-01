@@ -1,7 +1,7 @@
-from .parsing import Parsing
+from .contrained import Constrained
 from .answer import Answer
 
 __all__ = [
-    "Parsing",
+    "Constrained",
     "Answer"
 ]

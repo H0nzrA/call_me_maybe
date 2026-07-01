@@ -1,18 +1,17 @@
 from .cli import Argument
-from .constrained import Parsing, Answer
+from .constrained import Answer
 from typing import Any
 
 
 class Program:
     def __init__(self) -> None:
-        self.__args: dict[str, Any] = Argument().get_io_file()
-        self.__parser: Parsing = Parsing(**self.__args)
-        self.__gen: Answer = Answer(
-            parsed_data=self.__parser.get_file_content()
+        self.__args = Argument()
+        self.__answer = Answer(
+            io_path=self.__args.get_io_file(),
         )
 
     def run(self) -> None:
-        self.__gen.generate()
+        self.__answer.generate()
 
 
 if __name__ == "__main__":

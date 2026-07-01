@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Any
+from pathlib import Path
 
 
 class Type(BaseModel):
@@ -36,3 +37,10 @@ class ParsedData(BaseModel):
 
     definitions: list[Definition]
     callings: list[Calling]
+
+class PathData(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    definition: Path
+    calling: Path
+    result: Path

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 from pathlib import Path
-from .model_json import Definition, Calling
+from .model_json import Definition, Calling, ParsedData
 import json
 from typing import Any
 
@@ -34,13 +34,10 @@ class Parsing(BaseModel):
         path = self.result.parent
         path.mkdir(parents=True, exist_ok=True)
 
-    def get_file_content(self) -> dict[
-        str,
-        list[Any]
-    ]:
+    def get_file_content(self) -> ParsedData:
         self.__parsing()
 
-        return {
-            "definition": self._content_definition,
-            "calling": self._content_calling
-        }
+        return ParsedData(
+            definitions=self._content_definition,
+            callings=self._content_calling
+        )

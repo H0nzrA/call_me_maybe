@@ -29,3 +29,10 @@ class Result(BaseModel):
     prompt: str
     name: str
     parameters: dict[str, Any]
+
+
+class ParsedData(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    definitions: list[Definition]
+    callings: list[Calling]

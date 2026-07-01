@@ -1,20 +1,12 @@
-from .contrained.parsing import Parsing
-from .contrained.cli import CLI
+from .cli import Argument
 
 
 class Program:
     def __init__(self) -> None:
-        pass
+        self.__args: Argument = Argument()
 
     def run(self) -> None:
-        cli = CLI()
-        pars = Parsing(
-            definition=cli.get_io_file()["definition"],
-            calling=cli.get_io_file()["calling"],
-            result=cli.get_io_file()["result"]
-        )
-        val = pars.get_file_content()
-        print(val)
+        print(self.__args.get_io_file())
 
 
 if __name__ == "__main__":

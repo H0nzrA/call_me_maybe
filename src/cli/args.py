@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict
 from pathlib import Path
 
 
-class CLIError(Exception):
+class ArgsError(Exception):
     pass
 
 
@@ -32,7 +32,7 @@ class IOFlags(Enum):
     ]
 
 
-class CLI:
+class Argument:
     def __init__(self) -> None:
         self.io_file: IOFile = IOFile(
             definition="data/input/functions_definition.json",
@@ -54,12 +54,12 @@ class CLI:
 
         for arg in it:
             if arg not in self.__flags_map:
-                raise CLIError(f"Unknown flag {arg}")
+                raise ArgsError(f"Unknown flag {arg}")
 
             try:
                 value: str = next(it)
                 if value in self.__flags_map:
-                    raise CLIError(
+                    raise ArgsError(
                         "Having another flag "
                         f"{value!r} not argument"
                     )
@@ -68,7 +68,7 @@ class CLI:
                 setattr(self.io_file, field.name, value)
 
             except StopIteration:
-                raise CLIError(f"No value given for flag {arg!r}")
+                raise ArgsError(f"No value given for flag {arg!r}")
 
     def get_io_file(self) -> dict[str, Path]:
         return {

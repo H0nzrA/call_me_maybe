@@ -38,6 +38,7 @@ class ParsedData(BaseModel):
     definitions: list[Definition]
     callings: list[Calling]
 
+
 class PathData(BaseModel):
     model_config = ConfigDict(extra="forbid")
 

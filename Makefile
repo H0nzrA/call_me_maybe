@@ -6,7 +6,7 @@
 #    By: trakotoz <trakotoz@student.42antananarivo  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/06/28 15:03:02 by trakotoz          #+#    #+#              #
-#    Updated: 2026/06/28 18:25:38 by trakotoz         ###   ########.fr        #
+#    Updated: 2026/07/01 12:45:01 by trakotoz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -92,7 +92,7 @@ re			: fclean all
 
 lint		: install
 	@ echo "$(C_MAGENTA)- Project readability, lint standard$(C_RESET)"
-	@ $(URUN) flake8 $(SRC)
+	@ $(URUN) flake8 $(SRC) --exclude=$(SDK),$(VENV),$(CACHE)
 	@ $(URUN) mypy $(SRC) \
 		--warn-return-any \
 		--warn-unused-ignores \
@@ -102,7 +102,7 @@ lint		: install
 
 lint-strict	: install
 	@ echo "$(C_MAGENTA)- Project readability, lint strict$(C_RESET)"
-	@ $(URUN) flake8 $(SRC)
+	@ $(URUN) flake8 $(SRC) --exclude=$(SDK),$(VENV),$(CACHE)
 	@ $(URUN) mypy --strict $(SRC)
 
 add			:
@@ -118,6 +118,6 @@ tree		:
 	@ $(UV) tree
 
 pydoc		: install
-	@ $(URUN) pydocstyle $(SRc)
+	@ $(URUN) pydocstyle $(SRC)
 
 .PHONY		: all check init install run debug clean fclean re lint lint-strict add remove tree

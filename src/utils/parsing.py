@@ -1,5 +1,4 @@
 from pydantic import BaseModel, ConfigDict, PrivateAttr
-from pathlib import Path
 from .models import Definition, Calling, ParsedData, PathData
 import json
 from typing import Any

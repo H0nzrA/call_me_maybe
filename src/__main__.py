@@ -1,6 +1,5 @@
 from .cli import Argument
 from .constrained import Answer
-from typing import Any
 
 
 class Program:

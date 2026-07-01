@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, PrivateAttr
+from pydantic import BaseModel, ConfigDict
 from ..utils import Output
 from .contrained import Constrained
 from ..utils import Parsing, ParsedData, PathData, Result
@@ -29,4 +29,3 @@ class Answer(BaseModel):
             path_data=self.io_path
         )
         return pars.get_file_content()
-

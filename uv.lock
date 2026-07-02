@@ -92,6 +92,7 @@ dependencies = [
     { name = "mypy" },
     { name = "pydantic" },
     { name = "pydocstyle" },
+    { name = "regex" },
 ]
 
 [package.metadata]
@@ -101,6 +102,7 @@ requires-dist = [
     { name = "mypy", specifier = ">=2.1.0" },
     { name = "pydantic", specifier = ">=2.13.4" },
     { name = "pydocstyle", specifier = ">=6.3.0" },
+    { name = "regex", specifier = ">=2026.5.9" },
 ]
 
 [[package]]

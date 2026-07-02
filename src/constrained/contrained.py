@@ -2,6 +2,7 @@ from pydantic import BaseModel, ConfigDict, PrivateAttr
 from ..utils import Definition, ParsedData, Result
 from llm_sdk import Small_LLM_Model  # type: ignore
 from typing import Any
+from .get_prompt import FPrompt
 
 
 class Constrained(BaseModel):
@@ -44,7 +45,7 @@ class Constrained(BaseModel):
         prompt: str,
         big_dict: dict[str, Definition]
     ) -> Definition:
-        full_prompt: str = self.__get_function_prompt(prompt)
+        full_prompt: str = FPrompt.function_prompt(prompt, self.parsed_data.definitions)
         input_ids = self.__model.encode(full_prompt)[0].tolist()
         definitions_token = [
             self.__model.encode(definition.name).tolist()[0]
@@ -77,28 +78,12 @@ class Constrained(BaseModel):
         res: str = self.__model.decode(generated)
         return big_dict[res]
 
-    def __get_function_prompt(self, prompt: str) -> str:
-        res: str = ""
-        func_dict = {
-            d.name: d.description
-            for d in self.parsed_data.definitions
-        }
-        func_desc = "\n".join(
-            f"{key}: {value}"
-            for key, value in func_dict.items()
-        )
-
-        res += f"Functions definition: {func_desc}\n\n"
-        res += f"Select the best function for this prompt: {prompt}\n"
-        res += "Function: "
-
-        return res
-
     def __process_parameter(
         self,
         prompt: str,
         definition: Definition
     ) -> dict[str, Any]:
-        return {
-            "Teddy": "Andrianina"
-        }
+        full_prompt: str = FPrompt.parameter_prompt(prompt, definition)
+
+        print(full_prompt, flush=True)
+        return {}

@@ -1,5 +1,6 @@
 from ..utils import Definition
 
+
 class FPrompt:
     @classmethod
     def function_prompt(cls, original_prompt: str, definitions: list[Definition]) -> str:

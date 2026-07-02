@@ -3,6 +3,7 @@ from ..utils import Definition, ParsedData, Result
 from llm_sdk import Small_LLM_Model  # type: ignore
 from typing import Any
 from .get_prompt import FPrompt
+from .finite_state_machine import State, FSM
 
 
 class Constrained(BaseModel):
@@ -37,6 +38,12 @@ class Constrained(BaseModel):
                 name=selected_func.name,
                 parameters=parameters
             )
+            print(f"\nPrompt: {res.prompt}", flush=True)
+            print(f"Name: {res.name}", flush=True)
+            print(f"Parameters: ", flush=True)
+            for key, value in res.parameters:
+                print(f"- {key}: {value}", flush=True)
+            print()
 
             self.__result.append(res)
 
@@ -74,6 +81,7 @@ class Constrained(BaseModel):
             next_token = logits.index(max(logits))
             input_ids.append(next_token)
             generated.append(next_token)
+            print(self.__model.decode([next_token]), flush=True, end="")
 
         res: str = self.__model.decode(generated)
         return big_dict[res]
@@ -83,7 +91,32 @@ class Constrained(BaseModel):
         prompt: str,
         definition: Definition
     ) -> dict[str, Any]:
-        full_prompt: str = FPrompt.parameter_prompt(prompt, definition)
-
-        print(full_prompt, flush=True)
+        # full_prompt: str = FPrompt.parameter_prompt(prompt, definition)
+        # input_ids = self.__model.encode(full_prompt).tolist()[0]
+        #
+        # state: State = State.START
+        # text: str = ""
+        #
+        # while True:
+        #     logits = self.__model.get_logits_from_input_ids(input_ids)
+        #     allowed_token = FSM.allowed_key(state, definition)
+        #
+        #     for i in range(len(logits)):
+        #         token_str = self.__model.decode([i])
+        #
+        #         if token_str not in allowed_token:
+        #             logits[i] = float("-inf")
+        #
+        #     next_token = logits.index(max(logits))
+        #     input_ids.append(next_token)
+        #
+        #     piece: str = self.__model.decode([next_token])
+        #     text += piece
+        #
+        #     state = FSM.update_state(state, piece)
+        #
+        #     if state == State.DONE:
+        #         break
+        #
+        # return FSM.json_loads(text)
         return {}

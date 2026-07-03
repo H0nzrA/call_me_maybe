@@ -1,0 +1,56 @@
+[
+  {
+    "prompt": "What is the sum of -12 and 47?"
+  },
+  {
+    "prompt": "What is the sum of 3.5 and 2.25?"
+  },
+  {
+    "prompt": "There were 12 apples, then 5 more arrived and 3 went bad. What is the sum of 12 and 5?"
+  },
+  {
+    "prompt": "Calculate the square root of 81, not 64"
+  },
+  {
+    "prompt": "What's the square root of forty-nine?"
+  },
+  {
+    "prompt": "Greet the user known as 'Sir Reginald the Third'"
+  },
+  {
+    "prompt": "Say hello to Aragorn son of Arathorn"
+  },
+  {
+    "prompt": "Can you reverse xylophone for me?"
+  },
+  {
+    "prompt": "Greet 42"
+  },
+  {
+    "prompt": "Reverse the string 'café'"
+  },
+  {
+    "prompt": "In 'abc123xyz456' change every third character to X"
+  },
+  {
+    "prompt": "Replace every occurrence of 'the' with 'THE' in 'the quick brown fox jumps over the lazy dog because the fox is quick'"
+  },
+  {
+    "prompt": "Substitute 'cat' with 'dog' in 'The cat came in with the wind and sat with another cat'"
+  },
+  {
+    "prompt": "In the sentence 'I love pizza', change 'pizza' to 'pasta'"
+  },
+  {
+    "prompt": "Replace all vowels and numbers in 'Ab12Cd34' with #"
+  },
+  {
+    "prompt": "Reverse the numbers 5 and 9"
+  },
+  {
+    "prompt": "Give me the square root"
+  },
+  {
+    "prompt": "Add 5 and 10, then greet mario"
+  }
+]

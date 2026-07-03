@@ -1,6 +1,7 @@
 from .write_output import Output
 from .parsing import Parsing
 from .models import Definition, Calling, Result, ParsedData, PathData
+from .others import timer_func
 
 
 __all__: list[str] = [
@@ -10,5 +11,6 @@ __all__: list[str] = [
     "Result",
     "Parsing",
     "ParsedData",
-    "PathData"
+    "PathData",
+    "timer_func"
 ]

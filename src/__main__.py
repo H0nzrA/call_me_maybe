@@ -1,5 +1,6 @@
 from .cli import Argument
 from .constrained import Answer
+from .utils import timer_func
 
 
 class Program:
@@ -9,6 +10,7 @@ class Program:
             io_path=self.__args.get_io_file(),
         )
 
+    @timer_func
     def run(self) -> None:
         self.__answer.generate()
 

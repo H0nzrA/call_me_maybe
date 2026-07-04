@@ -14,11 +14,12 @@ class FPrompt:
             for d in definitions
         }
         func_desc = "\n".join(
-            f"{key}: {value}"
+            f"- {key}: {value}"
             for key, value in func_dict.items()
         )
 
-        res += f"Functions definition: {func_desc}\n\n"
+        res += f"Functions definition:\n"
+        res += f"{func_desc}\n\n"
         res += f"Select the best function for this prompt: {original_prompt}\n"
         res += "Function: "
 

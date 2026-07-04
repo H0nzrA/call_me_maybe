@@ -34,13 +34,6 @@ class Constrained(BaseModel):
             name=selected_func.name,
             parameters=parameters
         )
-        print(f"\nPrompt: {res.prompt}", flush=True)
-        print(f"Name: {res.name}", flush=True)
-        print("Parameters: ", flush=True)
-        for key, value in res.parameters.items():
-            print(f"- {key}: {value}", flush=True)
-        print()
-
         return res
 
     def __process_function(
@@ -80,7 +73,6 @@ class Constrained(BaseModel):
             next_token = logits.index(max(logits))
             input_ids.append(next_token)
             generated.append(next_token)
-            print(self.__model.decode([next_token]), flush=True, end="")
 
         res: str = self.__model.decode(generated)
         return big_dict[res]

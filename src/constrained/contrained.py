@@ -3,7 +3,6 @@ from ..utils import Definition, ParsedData, Result
 from llm_sdk import Small_LLM_Model  # type: ignore
 from typing import Any
 from .get_prompt import FPrompt
-from .finite_state_machine import State, FSM
 
 
 class Constrained(BaseModel):

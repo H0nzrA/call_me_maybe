@@ -4,6 +4,10 @@ from enum import Enum
 class Syntax(Enum):
     RESET = "\033[0m"
     CLEAR = "\033[H\033[J"
+    CLEAR_LINE = "\033[2K"
+
+    CURSOR_HOME = "\r"
+    CURSOR_UP = "\033[1A"
 
     BOLD = "\033[1m"
     DIM = "\033[2m"

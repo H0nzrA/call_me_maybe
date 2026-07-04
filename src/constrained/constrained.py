@@ -82,4 +82,7 @@ class Constrained(BaseModel):
         prompt: str,
         definition: Definition
     ) -> dict[str, Any]:
-        return {}
+        return {
+            "Name": "Teddy Andrianina",
+            "Pseudo": "H0nzrA"
+        }

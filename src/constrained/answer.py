@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from ..utils import FileManagement
-from .contrained import Constrained
+from .constrained import Constrained
 from ..utils import Parsing, ParsedData, PathData, Result
 
 

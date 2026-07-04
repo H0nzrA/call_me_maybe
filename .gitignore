@@ -23,3 +23,8 @@ pyrightconfig.json
 # Project General
 .huggingface
 output/
+
+# Test
+test*
+*test*
+*Test*

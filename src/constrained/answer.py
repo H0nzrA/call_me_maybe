@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from ..utils import Output
+from ..utils import FileManagement
 from .contrained import Constrained
 from ..utils import Parsing, ParsedData, PathData, Result
 
@@ -14,13 +14,15 @@ class Answer(BaseModel):
 
         parsed_data: ParsedData = self.__get_data()
         gen: Constrained = Constrained(
-            parsed_data=parsed_data
+            definitions=parsed_data.definitions
         )
-        result: list[Result] = gen.generate()
-        Output.write_json(
-            path=self.io_path.result,
-            data=result
-        )
+        FileManagement.clear_file(self.io_path.result)
+        for c in parsed_data.callings:
+            result: Result = gen.generate(c)
+            FileManagement.write_json(
+                path=self.io_path.result,
+                data=result
+            )
 
         print("Finish")
 

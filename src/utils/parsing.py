@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 from .models import Definition, Calling, ParsedData, PathData
-import json
 from typing import Any
+from .file_management import FileManagement
 
 
 class Parsing(BaseModel):
@@ -16,14 +16,12 @@ class Parsing(BaseModel):
         data: list[dict[str, Any]] = []
 
         # Parsing Definition
-        with self.path_data.definition.open("r") as f:
-            data = json.load(f)
+        data = FileManagement.read_json(self.path_data.definition)
         for d in data:
             self._content_definition.append(Definition(**d))
 
         # Parsing Calling Test
-        with self.path_data.calling.open("r") as f:
-            data = json.load(f)
+        data = FileManagement.read_json(self.path_data.calling)
         for d in data:
             self._content_calling.append(Calling(**d))
 

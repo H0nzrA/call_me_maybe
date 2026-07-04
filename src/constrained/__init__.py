@@ -1,4 +1,4 @@
-from .contrained import Constrained
+from .constrained import Constrained
 from .answer import Answer
 
 __all__ = [

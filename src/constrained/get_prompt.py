@@ -3,7 +3,11 @@ from ..utils import Definition
 
 class FPrompt:
     @classmethod
-    def function_prompt(cls, original_prompt: str, definitions: list[Definition]) -> str:
+    def function_prompt(
+        cls,
+        original_prompt: str,
+        definitions: list[Definition]
+    ) -> str:
         res: str = ""
         func_dict = {
             d.name: d.description
@@ -21,7 +25,11 @@ class FPrompt:
         return res
 
     @classmethod
-    def parameter_prompt(cls, original_prompt: str, definition: Definition) -> str:
+    def parameter_prompt(
+        cls,
+        original_prompt: str,
+        definition: Definition
+    ) -> str:
         res: str = "Extraction of parameter from prompt.\n\n"
 
         res += f"User prompt: {original_prompt!r}.\n\n"
@@ -29,7 +37,7 @@ class FPrompt:
         res += "Function:\n"
         res += f"- name: {definition.name!r}\n"
         res += f"- description: {definition.description!r}\n"
-        res += f"- parameter:\n"
+        res += "- parameter:\n"
         for key, value in definition.parameters.items():
             res += f" - {key}: {value.type}\n"
         res += "\n"

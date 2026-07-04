@@ -39,7 +39,7 @@ class Constrained(BaseModel):
             )
             print(f"\nPrompt: {res.prompt}", flush=True)
             print(f"Name: {res.name}", flush=True)
-            print(f"Parameters: ", flush=True)
+            print("Parameters: ", flush=True)
             for key, value in res.parameters:
                 print(f"- {key}: {value}", flush=True)
             print()
@@ -51,7 +51,10 @@ class Constrained(BaseModel):
         prompt: str,
         big_dict: dict[str, Definition]
     ) -> Definition:
-        full_prompt: str = FPrompt.function_prompt(prompt, self.parsed_data.definitions)
+        full_prompt: str = FPrompt.function_prompt(
+            prompt,
+            self.parsed_data.definitions
+        )
         input_ids = self.__model.encode(full_prompt)[0].tolist()
         definitions_token = [
             self.__model.encode(definition.name).tolist()[0]

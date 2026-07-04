@@ -18,7 +18,7 @@ class FPrompt:
             for key, value in func_dict.items()
         )
 
-        res += f"Functions definition:\n"
+        res += "Functions definition:\n"
         res += f"{func_desc}\n\n"
         res += f"Select the best function for this prompt: {original_prompt}\n"
         res += "Function: "

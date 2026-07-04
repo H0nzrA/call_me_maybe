@@ -16,18 +16,18 @@ class FileManagement:
     @classmethod
     def read_json(cls, path: Path) -> list[dict[str, Any]]:
         res: list[dict[str, Any]] = []
-
-        try:
-            with path.open("r") as f:
-                res = json.load(f)
-        except Exception:
-            return []
+        with path.open("r") as f:
+            res = json.load(f)
 
         return res
 
     @classmethod
     def write_json(cls, path: Path, data: Result) -> None:
-        full_content: list[dict[str, Any]] = FileManagement.read_json(path)
+        full_content: list[dict[str, Any]] = []
+        try:
+            full_content = FileManagement.read_json(path)
+        except FileNotFoundError:
+            full_content = []
 
         try:
             data_cast: dict[str, Any] = FileManagement.transform_result(data)

@@ -3,6 +3,7 @@ from enum import Enum
 
 class Syntax(Enum):
     RESET = "\033[0m"
+    CLEAR = "\033[H\033[J"
 
     BOLD = "\033[1m"
     DIM = "\033[2m"

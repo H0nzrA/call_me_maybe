@@ -1,4 +1,4 @@
-from .cli import Argument
+from .cli import Argument, Display
 from .constrained import Answer
 from .utils import timer_func
 
@@ -17,6 +17,7 @@ class Program:
 
 if __name__ == "__main__":
     try:
+        display = Display()
         program: Program = Program()
         program.run()
 

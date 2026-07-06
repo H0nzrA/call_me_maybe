@@ -3,7 +3,7 @@ from ..utils import Definition, Calling, Result
 from llm_sdk import Small_LLM_Model  # type: ignore
 from typing import Any
 from .get_prompt import FPrompt
-
+from .condidature import Condidature
 
 class Constrained(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -82,7 +82,6 @@ class Constrained(BaseModel):
         prompt: str,
         definition: Definition
     ) -> dict[str, Any]:
-        return {
-            "Name": "Teddy Andrianina",
-            "Pseudo": "H0nzrA"
-        }
+        res: dict[str, Any] = {}
+
+        return res

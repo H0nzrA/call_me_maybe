@@ -29,26 +29,19 @@ class FPrompt:
     def parameter_prompt(
         cls,
         original_prompt: str,
-        definition: Definition
+        definition: Definition,
+        to_extract: str
     ) -> str:
-        res: str = "Extraction of parameter from prompt.\n\n"
+        res: str = "Extract exactly one parameter from the user's prompt.\n\n"
 
-        res += f"User prompt: {original_prompt!r}.\n\n"
-
-        res += "Function:\n"
-        res += f"- name: {definition.name!r}\n"
-        res += f"- description: {definition.description!r}\n"
-        res += "- parameter:\n"
+        res += "Function definition:\n"
+        res += f"- {definition.name}: {definition.description}\n"
+        res += "- Parameters:\n"
         for key, value in definition.parameters.items():
-            res += f" - {key}: {value.type}\n"
-        res += "\n"
+            res += f"\t- {key}: {value.type}\n"
+        res += "\n\n"
 
-        res += "Extract the parameter values from the user prompt.\n"
-        res += "Return ONLY a valid JSON object.\n"
-        res += "- No explanation\n"
-        res += "- No markdown\n"
-        res += "- No code fences\n"
-        res += "- Do NOT output anything except JSON\n\n"
-        res += "JSON:\n"
+        res += f"Prompt: {original_prompt}\n"
+        res += f"Parameter to extract {to_extract!r}: "
 
         return res

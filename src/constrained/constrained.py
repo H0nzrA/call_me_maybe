@@ -1,9 +1,10 @@
 from pydantic import BaseModel, ConfigDict, PrivateAttr
-from ..utils import Definition, Calling, Result
+from ..utils import Definition, Calling, Result, brackets_validator
 from llm_sdk import Small_LLM_Model  # type: ignore
 from typing import Any
 from .get_prompt import FPrompt
-from .condidature import Condidature
+import json
+
 
 class Constrained(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -84,4 +85,23 @@ class Constrained(BaseModel):
     ) -> dict[str, Any]:
         res: dict[str, Any] = {}
 
+        full_prompt: str = FPrompt.parameter_prompt(prompt, definition)
+        input_ids = self.__model.encode(full_prompt)[0].tolist()
+
+        generated_text: str = ""
+
+        while True:
+
+            if brackets_validator(generated_text):
+                break
+
+            logits = self.__model.get_logits_from_input_ids(input_ids)
+            next_token = logits.index(max(logits))
+
+            text = self.__model.decode([next_token])
+            generated_text += text
+
+            input_ids.append(next_token)
+
+        res = json.loads(generated_text)
         return res

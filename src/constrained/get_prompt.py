@@ -30,18 +30,44 @@ class FPrompt:
         cls,
         original_prompt: str,
         definition: Definition,
-        to_extract: str
     ) -> str:
-        res: str = "Extract exactly one parameter from the user's prompt.\n\n"
-
-        res += "Function definition:\n"
-        res += f"- {definition.name}: {definition.description}\n"
-        res += "- Parameters:\n"
+        params: str = ""
         for key, value in definition.parameters.items():
-            res += f"\t- {key}: {value.type}\n"
-        res += "\n\n"
+            params += f'- "{key}": {value.type}\n'
 
-        res += f"Prompt: {original_prompt}\n"
-        res += f"Parameter to extract {to_extract!r}: "
+        prompt = f"""
+You are a function parameter extraction system.
 
-        return res
+Your ONLY task is to extract the parameters from the user's request.
+
+IMPORTANT RULES:
+- Do NOT execute the function.
+- Do NOT calculate anything.
+- Do NOT generate the function result.
+- Do NOT transform, reverse, modify, or process values.
+- Extract only the values provided by the user.
+- Return ONLY the parameters required by the function.
+- Do NOT add extra keys.
+- Do NOT remove required keys.
+
+Function definition:
+{definition.name}: {definition.description}
+
+Parameters:
+{params}
+
+User request:
+{original_prompt}
+
+OUTPUT RULES:
+- Return exactly ONE valid JSON object.
+- The JSON must contain only the function parameters.
+- Do NOT use Markdown.
+- Do NOT write ```json.
+- Do NOT write explanations.
+- Do NOT write any text before or after the JSON.
+- The response must start with '{{' and end with '}}'.
+
+JSON: """
+
+        return prompt

@@ -1,4 +1,4 @@
-from .syntax import Syntax
+from ..utils import Syntax
 import time
 from typing import Any
 

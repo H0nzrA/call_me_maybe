@@ -4,6 +4,7 @@ from .constrained import Constrained
 from ..utils import Parsing, ParsedData, PathData, Result
 from ..cli import Display
 import time
+import json
 
 
 class Answer(BaseModel):
@@ -19,23 +20,45 @@ class Answer(BaseModel):
             definitions=parsed_data.definitions
         )
 
+        total: int = len(parsed_data.callings)
+        validate: int = 0
+        fail: int = 0
+
         FileManagement.clear_file(self.io_path.result)
         print("\n")
-        for c in parsed_data.callings:
-            display.start_process(c.prompt)
+        for i, c in enumerate(parsed_data.callings):
+            try:
+                display.start_process(c.prompt, i, total)
 
-            start: float = time.perf_counter()
-            result: Result = gen.generate(c)
-            end: float = time.perf_counter()
+                start: float = time.perf_counter()
+                result: Result = gen.generate(c)
+                end: float = time.perf_counter()
 
-            FileManagement.write_json(
-                path=self.io_path.result,
-                data=result
-            )
-            display.end_process(result.model_dump(), end - start)
+                FileManagement.write_json(
+                    path=self.io_path.result,
+                    data=result
+                )
+                display.end_process(result.model_dump(), end - start)
+
+            except Exception as e:
+                display.problem(c.prompt, str(e))
+                pass
+
+
 
     def __get_data(self) -> ParsedData:
         pars: Parsing = Parsing(
             path_data=self.io_path
         )
         return pars.get_file_content()
+
+    def __validate_output_json(self) -> bool:
+        try:
+            with self.io_path.result.open("r") as f:
+                res = json.load(f)
+                print(res)
+
+        except Exception:
+            return False
+
+        return True

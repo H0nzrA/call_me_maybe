@@ -61,16 +61,22 @@ class Display:
             )
             time.sleep(0.008)
 
-    def start_process(self, prompt: str) -> None:
-        res: str = Syntax.YELLOW.value + ">>> Processing: "
+    def start_process(self, prompt: str, count: int, total: int) -> None:
+        res: str = ""
+
+        res += Syntax.YELLOW.value + ">>> Processing: "
         res += Syntax.WHITE.value + Syntax.BOLD.value
-        res += f"{prompt!r}"
+        res += f"{prompt!r}\n"
         res += Syntax.RESET.value
+
+        res += self.__calculate_loading(count, total)
+        res += Syntax.BOLD.value + f" ({count}/{total})\n" + Syntax.RESET.value
 
         print_flush(res)
 
     def end_process(self, result: dict[str, Any], t: float) -> None:
         res: str = Syntax.CURSOR_UP.value + Syntax.CLEAR_LINE.value
+        res += Syntax.CURSOR_UP.value + Syntax.CLEAR_LINE.value
 
         res += Syntax.BOLD.value + Syntax.GREEN.value
         res += "(~.~) Completed in " + Syntax.RESET.value
@@ -88,3 +94,33 @@ class Display:
         res += Syntax.RESET.value + "\n"
 
         print_flush(res)
+
+    def problem(self, prompt: str, motif: str) -> None:
+        res: str = Syntax.CURSOR_UP.value + Syntax.CLEAR_LINE.value
+
+        res += Syntax.BOLD.value + Syntax.RED.value
+        res += "!!! Problem encounter with: " + Syntax.RESET.value
+
+        res += Syntax.WHITE.value + Syntax.BOLD.value
+        res += f"{prompt!r}\n"
+        res += Syntax.RESET.value
+
+        res += Syntax.YELLOW.value + "Motif: " + Syntax.RESET.value
+        res += Syntax.WHITE.value + Syntax.BOLD.value
+        res += f"{motif!r}\n"
+        res += Syntax.RESET.value
+
+        res += Syntax.RESET.value + "\n"
+
+        print_flush(res)
+
+    def __calculate_loading(self, count: int, total: int) -> str:
+        if total <= 0:
+            return "▒" * 10
+
+        filled = min(10, max(0, (10 * count) // total))
+
+        return (
+            (Syntax.BLUE.value + "▒" + Syntax.RESET.value) * filled
+            + "▒" * (10 - filled)
+        )

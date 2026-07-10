@@ -87,6 +87,7 @@ class Constrained(BaseModel):
 
         full_prompt: str = FPrompt.parameter_prompt(prompt, definition)
         input_ids = self.__model.encode(full_prompt)[0].tolist()
+        # print(full_prompt, flush=True, end="")
 
         generated_text: str = ""
 
@@ -102,6 +103,33 @@ class Constrained(BaseModel):
             generated_text += text
 
             input_ids.append(next_token)
+            # print(text, flush=True, end="")
 
-        res = json.loads(generated_text)
+        res = self.__validate_parameter(generated_text, definition)
+        return res
+
+    def __validate_parameter(self, generated: str, definition: Definition) -> dict[str, Any]:
+        tmp: dict[str, Any] = json.loads(generated)
+        res: dict[str, Any] = {}
+
+        for key, params in definition.parameters.items():
+            if params.type in (
+                "number",
+                "numbers",
+                "decimal",
+                "decimals",
+                "float"
+            ):
+                res[key] = float(tmp[key])
+
+            elif params.type in (
+                "integer",
+                "integers",
+                "int"
+            ):
+                res[key] = int(tmp[key])
+
+            else:
+                res[key] = tmp[key]
+
         return res

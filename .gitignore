@@ -28,3 +28,6 @@ output/
 test*
 *test*
 *Test*
+
+# Backup
+*.bak

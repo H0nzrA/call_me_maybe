@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, PrivateAttr
-from ..utils import Definition, Calling, Result, brackets_validator
+from ..utils import Definition, Calling, Result
 from llm_sdk import Small_LLM_Model  # type: ignore
 from typing import Any
 from .get_prompt import FPrompt
@@ -83,53 +83,4 @@ class Constrained(BaseModel):
         prompt: str,
         definition: Definition
     ) -> dict[str, Any]:
-        res: dict[str, Any] = {}
-
-        full_prompt: str = FPrompt.parameter_prompt(prompt, definition)
-        input_ids = self.__model.encode(full_prompt)[0].tolist()
-        # print(full_prompt, flush=True, end="")
-
-        generated_text: str = ""
-
-        while True:
-
-            if brackets_validator(generated_text):
-                break
-
-            logits = self.__model.get_logits_from_input_ids(input_ids)
-            next_token = logits.index(max(logits))
-
-            text = self.__model.decode([next_token])
-            generated_text += text
-
-            input_ids.append(next_token)
-            # print(text, flush=True, end="")
-
-        res = self.__validate_parameter(generated_text, definition)
-        return res
-
-    def __validate_parameter(self, generated: str, definition: Definition) -> dict[str, Any]:
-        tmp: dict[str, Any] = json.loads(generated)
-        res: dict[str, Any] = {}
-
-        for key, params in definition.parameters.items():
-            if params.type in (
-                "number",
-                "numbers",
-                "decimal",
-                "decimals",
-                "float"
-            ):
-                res[key] = float(tmp[key])
-
-            elif params.type in (
-                "integer",
-                "integers",
-                "int"
-            ):
-                res[key] = int(tmp[key])
-
-            else:
-                res[key] = tmp[key]
-
-        return res
+        ...

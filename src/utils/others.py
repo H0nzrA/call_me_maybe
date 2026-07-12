@@ -16,23 +16,3 @@ def timer_func(func: Callable[..., Any]) -> Callable[..., Any]:
         return res
 
     return wrapper
-
-def brackets_validator(text: str) -> bool:
-    if not text:
-        return False
-
-    pairs: dict[str, str] = {
-        "}":"{",
-    }
-    stack: list[str] = []
-
-    for c in text:
-        if c in "{":
-            stack.append(c)
-        elif c in pairs:
-            if not stack:
-                return False
-            if stack.pop() != pairs[c]:
-                return False
-
-    return len(stack) == 0

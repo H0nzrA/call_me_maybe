@@ -61,7 +61,13 @@ class Display:
             )
             time.sleep(0.008)
 
-    def start_process(self, prompt: str, count: int, total: int, fail: int) -> None:
+    def start_process(
+        self,
+        prompt: str,
+        count: int,
+        total: int,
+        fail: int
+    ) -> None:
         res: str = ""
 
         res += Syntax.YELLOW.value + ">>> Processing: "
@@ -74,7 +80,7 @@ class Display:
         if fail:
             res += f" | Fail: {fail}"
 
-        res +=Syntax.RESET.value
+        res += Syntax.RESET.value
 
         print_flush(res)
 

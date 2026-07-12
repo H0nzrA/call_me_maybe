@@ -61,7 +61,7 @@ class Display:
             )
             time.sleep(0.008)
 
-    def start_process(self, prompt: str, count: int, total: int) -> None:
+    def start_process(self, prompt: str, count: int, total: int, fail: int) -> None:
         res: str = ""
 
         res += Syntax.YELLOW.value + ">>> Processing: "
@@ -70,13 +70,16 @@ class Display:
         res += Syntax.RESET.value
 
         res += self.__calculate_loading(count, total)
-        res += Syntax.BOLD.value + f" ({count}/{total})\n" + Syntax.RESET.value
+        res += Syntax.BOLD.value + f" ({count}/{total})"
+        if fail:
+            res += f" | Fail: {fail}"
+
+        res +=Syntax.RESET.value
 
         print_flush(res)
 
     def end_process(self, result: dict[str, Any], t: float) -> None:
-        res: str = Syntax.CURSOR_UP.value + Syntax.CLEAR_LINE.value
-        res += Syntax.CURSOR_UP.value + Syntax.CLEAR_LINE.value
+        res: str = (Syntax.CURSOR_UP.value + Syntax.CLEAR_LINE.value) * 2
 
         res += Syntax.BOLD.value + Syntax.GREEN.value
         res += "(~.~) Completed in " + Syntax.RESET.value
@@ -96,10 +99,10 @@ class Display:
         print_flush(res)
 
     def problem(self, prompt: str, motif: str) -> None:
-        res: str = Syntax.CURSOR_UP.value + Syntax.CLEAR_LINE.value
+        res: str = (Syntax.CURSOR_UP.value + Syntax.CLEAR_LINE.value) * 2
 
         res += Syntax.BOLD.value + Syntax.RED.value
-        res += "!!! Problem encounter with: " + Syntax.RESET.value
+        res += "!!! Problem encountered with: " + Syntax.RESET.value
 
         res += Syntax.WHITE.value + Syntax.BOLD.value
         res += f"{prompt!r}\n"
@@ -116,11 +119,11 @@ class Display:
 
     def __calculate_loading(self, count: int, total: int) -> str:
         if total <= 0:
-            return "▒" * 10
+            return "█" * 20
 
-        filled = min(10, max(0, (10 * count) // total))
+        filled = min(20, max(0, (20 * count) // total))
 
         return (
-            (Syntax.BLUE.value + "▒" + Syntax.RESET.value) * filled
-            + "▒" * (10 - filled)
+            (Syntax.BLUE.value + "█" + Syntax.RESET.value) * filled
+            + "█" * (20 - filled)
         )

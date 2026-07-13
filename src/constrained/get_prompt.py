@@ -31,22 +31,25 @@ class FPrompt:
         original_prompt: str,
         definition: Definition,
     ) -> str:
-        params: str = ""
-        for key, value in definition.parameters.items():
-            params += f'- "{key}": {value.type}\n'
+        params: str = "\n".join(
+            f'- "{name}": {ptype.type}\n'
+            for name, ptype in definition.parameters.items()
+        )
 
-        prompt: str = "Extraction of function definition parameter from user's prompt.\n\n"
-
-        prompt += "Function Definition:\n"
-        prompt += f"{definition.name}: {definition.description}.\n"
+        prompt: str = (
+            "Extraction of function definition"
+            " parameter from user's prompt.\n\n"
+        )
+        prompt += (
+            "Function Definition: "
+            f"{definition.name} - {definition.description}.\n"
+        )
         prompt += f"Parameters:\n{params}\n"
-
-        prompt += f"User's prompt: {original_prompt}\n\n"
-
-        prompt += "Extract all the function definition parameters values from the user's prompt.\n"
-        prompt += "Valid JSON object only.\n"
-        prompt += "For regex (regular expression) follow the regex syntax, the regular expression grammar.\n"
-
-        prompt += "JSON: "
+        prompt += f"User's prompt: {original_prompt!r}\n\n"
+        prompt += (
+            "Fill in the value for each parameter"
+            " based on the user's prompt.\n"
+        )
+        prompt += "Arguments: "
 
         return prompt

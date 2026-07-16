@@ -1,58 +1,63 @@
 from ..utils import Syntax
 import time
 from typing import Any
+from pydantic import BaseModel, ConfigDict, PrivateAttr
 
 
 def print_flush(s: str) -> None:
     print(s, flush=True)
 
 
-class Display:
-    LOGO: list[str] = [
-        (
-            "    mmmm         mmmm   mmmm                "
-            "           mmm  mmm                mm               "
-        ),
-        (
-            "  ##\"\"\"\"#        \"\"##   \"\"##          "
-            "                 ###  ###                ##               "
-        ),
-        (
-            " ##\"      m#####m  ##     ##       ####m##"
-            "m m####m     ######## m#####m\"##  #####m###m  m####m  "
-        ),
-        (
-            " ##       \" mmm##  ##     ##       ## ##"
-            " ####mmmm##    ## ## ## \" mmm## ##m "
-            "## ##\"  \"####mmmm## "
-        ),
-        (
-            " ##m     m##\"\"\"##  ##     ##      "
-            " ## ## ####\"\"\"\"\"\"    ## \"\" ##m#"
-            "#\"\"\"##  ####\" ##    ####\"\"\"\"\"\" "
-        ),
-        (
-            "  ##mmmm###mmm###  ##mmm  ##mm"
-            "m    ## ## ##\"##mmmm#    ##   "
-            " ####mmm###   ###  ###mm##\"\"##mmmm# "
-        ),
-        (
-            "    \"\"\"\"  \"\"\"\" \"\" "
-            "  \"\"\"\"   \"\"\"\"  "
-            "  \"\" \"\" \"\"  \"\"\"\"\"  "
-            "   \"\"    \"\" \"\"\"\" \"\"   #"
-            "#   \"\" \"\"\"    \"\"\"\"\"  "
-        ),
-        (
-            "                               "
-            "                                "
-            "         ###                     "
-        )
-    ]
+class Display(BaseModel):
+    model_config = ConfigDict(extra="forbid")
 
-    def __init__(self) -> None:
+    __logo: list[str] = PrivateAttr(
+        default=[
+            (
+                "    mmmm         mmmm   mmmm                "
+                "           mmm  mmm                mm               "
+            ),
+            (
+                "  ##\"\"\"\"#        \"\"##   \"\"##          "
+                "                 ###  ###                ##               "
+            ),
+            (
+                " ##\"      m#####m  ##     ##       ####m##"
+                "m m####m     ######## m#####m\"##  #####m###m  m####m  "
+            ),
+            (
+                " ##       \" mmm##  ##     ##       ## ##"
+                " ####mmmm##    ## ## ## \" mmm## ##m "
+                "## ##\"  \"####mmmm## "
+            ),
+            (
+                " ##m     m##\"\"\"##  ##     ##      "
+                " ## ## ####\"\"\"\"\"\"    ## \"\" ##m#"
+                "#\"\"\"##  ####\" ##    ####\"\"\"\"\"\" "
+            ),
+            (
+                "  ##mmmm###mmm###  ##mmm  ##mm"
+                "m    ## ## ##\"##mmmm#    ##   "
+                " ####mmm###   ###  ###mm##\"\"##mmmm# "
+            ),
+            (
+                "    \"\"\"\"  \"\"\"\" \"\" "
+                "  \"\"\"\"   \"\"\"\"  "
+                "  \"\" \"\" \"\"  \"\"\"\"\"  "
+                "   \"\"    \"\" \"\"\"\" \"\"   #"
+                "#   \"\" \"\"\"    \"\"\"\"\"  "
+            ),
+            (
+                "                               "
+                "                                "
+                "         ###                     "
+            )
+        ]
+    )
+
+    def introduction(self) -> None:
         print(Syntax.CLEAR.value, flush=True)
-        for logo in Display.LOGO:
+        for logo in self.__logo:
             print(
                 f"{Syntax.BOLD.value}{Syntax.ITALIC.value}"
                 f"{Syntax.CYAN.value}"

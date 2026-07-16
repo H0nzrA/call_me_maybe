@@ -43,6 +43,11 @@ class Answer(BaseModel):
                 display.problem(c.prompt, str(e))
                 pass
 
+        if not self.__validate_output_json():
+            ...
+
+        print("Output valid JSON confirm")
+
     def __get_data(self) -> ParsedData:
         pars: Parsing = Parsing(
             path_data=self.io_path

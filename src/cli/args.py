@@ -1,7 +1,7 @@
 import sys
 from collections.abc import Iterator
 from enum import Enum
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, model_validator, PrivateAttr
 from pathlib import Path
 from ..utils import PathData
 
@@ -33,21 +33,28 @@ class IOFlags(Enum):
     ]
 
 
-class Argument:
-    def __init__(self) -> None:
-        self.io_file: IOFile = IOFile(
+class Argument(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    io_file: IOFile = Field(
+        default=IOFile(
             definition="data/input/functions_definition.json",
             calling="data/input/function_calling_tests.json",
             result="data/output/function_calling_results.json"
         )
-
-        self.__flags_map: dict[str, IOFlags] = {
+    )
+    __flags_map: dict[str, IOFlags] = PrivateAttr(
+        default={
             flag: member
             for member in IOFlags
             for flag in member.value
         }
+    )
 
+    @model_validator(mode="after")
+    def after_init(self) -> "Argument":
         self.__parse_arguments()
+        return self
 
     def __parse_arguments(self) -> None:
         args: list[str] = sys.argv[1::]

@@ -1,17 +1,22 @@
 from .cli import Argument, Display
 from .constrained import Answer
 from .utils import timer_func
+from pydantic import BaseModel, PrivateAttr, ConfigDict
 
 
-class Program:
-    def __init__(self) -> None:
+class Program(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    __args: Argument = PrivateAttr()
+    __answer: Answer = PrivateAttr()
+
+    @timer_func
+    def run(self) -> None:
         self.__args = Argument()
         self.__answer = Answer(
             io_path=self.__args.get_io_file(),
         )
 
-    @timer_func
-    def run(self) -> None:
         self.__answer.generate()
 
 

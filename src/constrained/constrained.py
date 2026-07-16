@@ -7,6 +7,7 @@ from .finite_state_machine import FSM, NumberFSM, IntegerFSM, StringFSM
 from .vocab import Vocab
 from enum import Enum
 import json
+from pathlib import Path
 
 
 class TypeEval(Enum):
@@ -42,7 +43,7 @@ class Constrained(BaseModel):
     @model_validator(mode="after")
     def after_init(self) -> "Constrained":
         path: str = self.__model.vocab_path()
-        self.__vocab = Vocab(path)
+        self.__vocab = Vocab(vocab_path=Path(path))
         return self
 
     def generate(self, calling: Calling) -> Result:
@@ -119,7 +120,7 @@ class Constrained(BaseModel):
 
         for idx, (key, ptype) in enumerate(items):
             last_param: bool = (idx == len(items) - 1)
-            input_ids += self.__model.encode(f'"{key}":')
+            input_ids += self.__model.encode(f'"{key}": ')
 
             val: list[int] = self.__field_generation(
                 input_ids,
@@ -164,7 +165,6 @@ class Constrained(BaseModel):
         state = fsm.start()
         generated: list[int] = []
         working_ids = list(input_ids)
-        print(self.__model.decode(input_ids), end="", flush=True)
 
         while True:
             candidates: set[int] = self.__vocab.valid_token_ids(fsm, state)
@@ -175,7 +175,6 @@ class Constrained(BaseModel):
             logits = self.__model.get_logits(working_ids)
             next_token = Constrained.max_token(logits, candidates)
             token_text = self.__vocab.text(next_token)
-            print(token_text, flush=True, end="")
 
             for c in token_text:
                 next_state = fsm.step(state, c)
@@ -267,7 +266,7 @@ class Constrained(BaseModel):
 
     @staticmethod
     def separator_literal(last: bool) -> str:
-        return "}" if last else ","
+        return "}" if last else ", "
 
     @staticmethod
     def max_token(logits: list[float], candidates: set[int]) -> int:

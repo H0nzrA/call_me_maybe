@@ -6,8 +6,7 @@ class LLM(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     model_choice: str = Field(default="Qwen/Qwen3-0.6B")
-
-    __model: Small_LLM_Model = PrivateAttr(default_factory=Small_LLM_Model)
+    __model: Small_LLM_Model = PrivateAttr()
 
     @model_validator(mode="after")
     def after_init(self) -> "LLM":

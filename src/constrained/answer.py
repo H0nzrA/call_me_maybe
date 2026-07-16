@@ -14,6 +14,7 @@ class Answer(BaseModel):
 
     def generate(self) -> None:
         display: Display = Display()
+        display.introduction()
 
         parsed_data: ParsedData = self.__get_data()
         gen: Constrained = Constrained(
@@ -44,7 +45,7 @@ class Answer(BaseModel):
                 pass
 
         if not self.__validate_output_json():
-            ...
+            raise ValueError("Invalid JSON Format Generated!!!!")
 
         print("Output valid JSON confirm")
 

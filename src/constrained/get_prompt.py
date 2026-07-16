@@ -50,6 +50,7 @@ class FPrompt:
             "Fill in the value for each parameter"
             " based on the user's prompt.\n"
         )
-        prompt += "Arguments: "
+        prompt += "Return and Generate a VALID JSON object ONLY.\n"
+        prompt += "JSON: "
 
         return prompt

@@ -1,0 +1,133 @@
+[
+  {
+    "name": "fn_add_numbers",
+    "description": "Add two numbers together and return their sum.",
+    "parameters": {
+      "a": { "type": "number" },
+      "b": { "type": "number" }
+    },
+    "returns": { "type": "number" }
+  },
+  {
+    "name": "fn_is_even",
+    "description": "Check if an integer is even. Returns true if even, false if odd.",
+    "parameters": {
+      "n": { "type": "integer" }
+    },
+    "returns": { "type": "boolean" }
+  },
+  {
+    "name": "fn_reverse_string",
+    "description": "Reverse a string and return the reversed result.",
+    "parameters": {
+      "s": { "type": "string" }
+    },
+    "returns": { "type": "string" }
+  },
+  {
+    "name": "fn_greet",
+    "description": "Generate a greeting message for a person by name.",
+    "parameters": {
+      "name": { "type": "string" }
+    },
+    "returns": { "type": "string" }
+  },
+  {
+    "name": "fn_multiply_decimals",
+    "description": "Multiply two decimal numbers together and return the product.",
+    "parameters": {
+      "x": { "type": "number" },
+      "y": { "type": "number" }
+    },
+    "returns": { "type": "number" }
+  },
+  {
+    "name": "fn_build_regex",
+    "description": "Build a regular expression pattern that matches the format described by the user.",
+    "parameters": {
+      "pattern": { "type": "string" }
+    },
+    "returns": { "type": "string" }
+  },
+  {
+    "name": "fn_toggle_flag",
+    "description": "Set a boolean feature flag to enabled or disabled.",
+    "parameters": {
+      "enabled": { "type": "boolean" }
+    },
+    "returns": { "type": "boolean" }
+  },
+  {
+    "name": "fn_calculate_discount",
+    "description": "Calculate the final price after applying a percentage discount.",
+    "parameters": {
+      "price": { "type": "number" },
+      "percentage": { "type": "number" }
+    },
+    "returns": { "type": "number" }
+  },
+  {
+    "name": "fn_format_temperature",
+    "description": "Format a temperature value with its unit into a display string.",
+    "parameters": {
+      "value": { "type": "number" },
+      "unit": { "type": "string" }
+    },
+    "returns": { "type": "string" }
+  },
+  {
+    "name": "fn_validate_email",
+    "description": "Check whether a given email address string is syntactically valid.",
+    "parameters": {
+      "email": { "type": "string" }
+    },
+    "returns": { "type": "boolean" }
+  },
+  {
+    "name": "fn_compute_age",
+    "description": "Compute a person's current age given their birth year.",
+    "parameters": {
+      "birth_year": { "type": "integer" }
+    },
+    "returns": { "type": "integer" }
+  },
+  {
+    "name": "fn_convert_currency",
+    "description": "Convert an amount of money from one currency to another.",
+    "parameters": {
+      "amount": { "type": "number" },
+      "from_currency": { "type": "string" },
+      "to_currency": { "type": "string" }
+    },
+    "returns": { "type": "number" }
+  },
+  {
+    "name": "fn_search_replace",
+    "description": "Replace every occurrence of a substring pattern in a text with a replacement string.",
+    "parameters": {
+      "text": { "type": "string" },
+      "pattern": { "type": "string" },
+      "replacement": { "type": "string" }
+    },
+    "returns": { "type": "string" }
+  },
+  {
+    "name": "fn_schedule_event",
+    "description": "Schedule a calendar event with a title, an hour of the day (0-23), and whether it repeats weekly.",
+    "parameters": {
+      "title": { "type": "string" },
+      "hour": { "type": "integer" },
+      "is_recurring": { "type": "boolean" }
+    },
+    "returns": { "type": "string" }
+  },
+  {
+    "name": "fn_report_balance",
+    "description": "Report an account balance and whether the account is overdrawn.",
+    "parameters": {
+      "balance": { "type": "number" },
+      "is_overdrawn": { "type": "boolean" }
+    },
+    "returns": { "type": "string" }
+  }
+]

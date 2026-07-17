@@ -16,3 +16,21 @@ def timer_func(func: Callable[..., Any]) -> Callable[..., Any]:
         return res
 
     return wrapper
+
+def check_repetition(content: list[int], generated: int) -> int:
+    count: int = 0
+    for c in content:
+        if c == generated:
+            count += 1
+    return count
+
+def remove_repetition(content: list[int], repetition: int) -> list[int]:
+    res: list[int] = []
+
+    for c in content:
+        if c == repetition:
+            res.append(c)
+            break
+        res.append(c)
+
+    return res

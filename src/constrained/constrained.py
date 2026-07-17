@@ -1,5 +1,12 @@
 from pydantic import BaseModel, ConfigDict, PrivateAttr, model_validator
-from ..utils import Definition, Calling, Result, Type, check_repetition, remove_repetition
+from ..utils import (
+    Definition,
+    Calling,
+    Result,
+    Type,
+    check_repetition,
+    remove_repetition
+)
 from .call_function import LLM
 from typing import Any
 from .get_prompt import FPrompt
@@ -178,8 +185,14 @@ class Constrained(BaseModel):
             next_token = Constrained.max_token(logits, candidates)
             token_text = self.__vocab.text(next_token)
 
-            if check_repetition(generated, next_token) > self.__max_token_repetition:
-                return remove_repetition(generated, next_token)
+            if (
+                check_repetition(generated, next_token) >
+                self.__max_token_repetition
+            ):
+                return (
+                    remove_repetition(generated, next_token) +
+                    self.__model.encode('"')
+                )
 
             for c in token_text:
                 next_state = fsm.step(state, c)

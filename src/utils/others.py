@@ -2,6 +2,8 @@ from collections.abc import Callable
 from typing import Any
 from functools import wraps
 import time
+from .syntax import Syntax
+from datetime import timedelta
 
 
 def timer_func(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -11,7 +13,12 @@ def timer_func(func: Callable[..., Any]) -> Callable[..., Any]:
         res: Any = func(*args, **kwargs)
         end: float = time.perf_counter()
 
-        print(f"Timer: {end - start:.3f} seconds")
+        t: timedelta = timedelta(seconds=(end - start))
+        print(
+            f"{Syntax.YELLOW.value}{Syntax.DIM.value}"
+            f">>> Function Execution: {t}<<<"
+            f"{Syntax.RESET.value}"
+        )
 
         return res
 

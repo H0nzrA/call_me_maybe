@@ -132,6 +132,7 @@ class Display(BaseModel):
         res: str = Syntax.BOLD.value
 
         res += Syntax.CYAN.value + Syntax.BOLD.value
+        res += Syntax.DIM.value
         res += "All Calling function processed!!\n"
         res += Syntax.RESET.value
 

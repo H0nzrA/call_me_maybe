@@ -128,13 +128,43 @@ class Display(BaseModel):
 
         print_flush(res)
 
-    def __calculate_loading(self, count: int, total: int) -> str:
-        if total <= 0:
-            return "█" * 20
+    def full_stats(self, total: int, fails: list[str]) -> None:
+        res: str = Syntax.BOLD.value
 
-        filled = min(20, max(0, (20 * count) // total))
+        res += Syntax.CYAN.value + Syntax.BOLD.value
+        res += "All Calling function processed!!\n"
+        res += Syntax.RESET.value
+
+        if fails:
+            res += Syntax.RED.value
+            res += "Calling Function FAILED:\n"
+            res += Syntax.RESET.value
+            for f in fails:
+                res += f"- {f!r}\n"
+
+        print_flush(res)
+
+    def __calculate_loading(self, count: int, total: int) -> str:
+        block: int = 50
+        if total <= 0:
+            return "█" * block
+
+        filled = min(block, max(0, (block * count) // total))
 
         return (
             (Syntax.BLUE.value + "█" + Syntax.RESET.value) * filled
-            + "█" * (20 - filled)
+            + "█" * (block - filled)
         )
+
+    def valid_print(self, text: str) -> None:
+        res: str = Syntax.GREEN.value + Syntax.BOLD.value
+        res += text
+        res += Syntax.RESET.value
+        print_flush(res)
+
+    def invalid_print(self, text: str) -> None:
+        res: str = Syntax.RED.value + Syntax.BOLD.value
+        res += text
+        res += Syntax.RESET.value
+        print_flush(res)
+

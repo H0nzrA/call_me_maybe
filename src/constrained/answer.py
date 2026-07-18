@@ -1,4 +1,6 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, PrivateAttr
+
+from src.cli.display import print_flush
 from ..utils import FileManagement
 from .constrained import Constrained
 from ..utils import Parsing, ParsedData, PathData, Result
@@ -11,10 +13,10 @@ class Answer(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     io_path: PathData
+    __display: Display = PrivateAttr(default_factory=Display)
 
     def generate(self) -> None:
-        display: Display = Display()
-        display.introduction()
+        self.__display.introduction()
 
         parsed_data: ParsedData = self.__get_data()
         gen: Constrained = Constrained(
@@ -22,13 +24,13 @@ class Answer(BaseModel):
         )
 
         total: int = len(parsed_data.callings)
-        fail: int = 0
+        fail: list[str] = []
 
         FileManagement.clear_file(self.io_path.result)
         print("\n")
         for i, c in enumerate(parsed_data.callings):
             try:
-                display.start_process(c.prompt, i, total, fail)
+                self.__display.start_process(c.prompt, i, total, len(fail))
 
                 start: float = time.perf_counter()
                 result: Result = gen.generate(c)
@@ -38,16 +40,16 @@ class Answer(BaseModel):
                     path=self.io_path.result,
                     data=result
                 )
-                display.end_process(result.model_dump(), end - start)
+                self.__display.end_process(result.model_dump(), end - start)
 
             except Exception as e:
-                display.problem(c.prompt, str(e))
+                self.__display.problem(c.prompt, str(e))
+                fail.append(c.prompt)
                 pass
 
-        if not self.__validate_output_json():
-            raise ValueError("Invalid JSON Format Generated!!!!")
+        self.__display.full_stats(total, fail)
 
-        print("Output valid JSON confirm")
+        self.__validate_output_json()
 
     def __get_data(self) -> ParsedData:
         pars: Parsing = Parsing(
@@ -55,12 +57,21 @@ class Answer(BaseModel):
         )
         return pars.get_file_content()
 
-    def __validate_output_json(self) -> bool:
+    def __validate_output_json(self) -> None:
         try:
             with self.io_path.result.open("r") as f:
                 _ = json.load(f)
 
-        except Exception:
-            return False
+        except FileNotFoundError as e:
+            self.__display.invalid_print(f"Output File not Generated: {e}")
+            return
 
-        return True
+        except json.JSONDecodeError:
+            self.__display.invalid_print("Invalid JSON Format Generated!!!!")
+            return
+
+        except Exception as e:
+            self.__display.invalid_print(f"Unknown Error: {e}")
+            return
+
+        self.__display.valid_print("Output valid JSON confirm")

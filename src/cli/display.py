@@ -167,4 +167,3 @@ class Display(BaseModel):
         res += text
         res += Syntax.RESET.value
         print_flush(res)
-

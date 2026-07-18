@@ -129,7 +129,7 @@ class Constrained(BaseModel):
 
         for idx, (key, ptype) in enumerate(items):
             last_param: bool = (idx == len(items) - 1)
-            input_ids += self.__model.encode(f'"{key}": ')
+            input_ids += self.__model.encode(f'"{key}":')
 
             val: list[int] = self.__field_generation(
                 input_ids,
@@ -179,7 +179,7 @@ class Constrained(BaseModel):
             candidates: set[int] = self.__vocab.valid_token_ids(fsm, state)
 
             if not candidates:
-                raise ValueError("Need Name and description")
+                raise ValueError("No candidates found")
 
             logits = self.__model.get_logits(working_ids)
             next_token = Constrained.max_token(logits, candidates)
@@ -197,7 +197,7 @@ class Constrained(BaseModel):
             for c in token_text:
                 next_state = fsm.step(state, c)
                 if next_state == -1:
-                    raise ValueError("Need Name and description 2")
+                    raise ValueError("Step For the FSM not Valid")
                 state = next_state
 
             generated.append(next_token)
@@ -224,7 +224,9 @@ class Constrained(BaseModel):
             accept: bool = fsm.is_valid(state)
 
             if not candidates and not accept:
-                raise ValueError("Need Name and description")
+                raise ValueError(
+                    "No candidated found or FSM state not accepted"
+                )
 
             end_active: bool = accept and end_ids is not None
             if end_active and end_ids is not None:
@@ -240,14 +242,14 @@ class Constrained(BaseModel):
             for c in token_text:
                 next_state = fsm.step(state, c)
                 if next_state == -1:
-                    raise ValueError("Need Name and description 2")
+                    raise ValueError("FSM State not accepted")
                 state = next_state
 
             generated.append(next_token)
             working_ids.append(next_token)
 
         if not fsm.is_valid(state):
-            raise ValueError("Need Name and description 3")
+            raise ValueError("FSM State not accepted")
 
         return generated
 
@@ -284,7 +286,7 @@ class Constrained(BaseModel):
 
     @staticmethod
     def separator_literal(last: bool) -> str:
-        return "}" if last else ", "
+        return "}" if last else ","
 
     @staticmethod
     def max_token(logits: list[float], candidates: set[int]) -> int:

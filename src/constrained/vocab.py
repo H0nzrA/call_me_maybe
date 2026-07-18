@@ -12,7 +12,7 @@ class Vocab(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     vocab_path: Path
-    __grammar_cache: dict[tuple[int, int], set[int]] = PrivateAttr()
+    __grammar_cache: dict[tuple[type[FSM], int], set[int]] = PrivateAttr()
 
     @model_validator(mode="after")
     def after_init(self) -> "Vocab":
@@ -44,7 +44,7 @@ class Vocab(BaseModel):
         return self
 
     def valid_token_ids(self, fsm: FSM, state: int) -> set[int]:
-        cache_key = (id(fsm), state)
+        cache_key = (type(fsm), state)
         cache = self.__grammar_cache.get(cache_key)
         if cache is not None:
             return cache

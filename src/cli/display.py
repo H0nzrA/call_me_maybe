@@ -146,7 +146,7 @@ class Display(BaseModel):
         print_flush(res)
 
     def __calculate_loading(self, count: int, total: int) -> str:
-        block: int = 50
+        block: int = 60
         if total <= 0:
             return "█" * block
 
@@ -154,7 +154,7 @@ class Display(BaseModel):
 
         return (
             (Syntax.BLUE.value + "█" + Syntax.RESET.value) * filled
-            + "█" * (block - filled)
+            + f"{Syntax.DIM.value}█{Syntax.RESET.value}" * (block - filled)
         )
 
     def valid_print(self, text: str) -> None:

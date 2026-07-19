@@ -7,58 +7,40 @@ from ..utils import (
     check_repetition,
     remove_repetition
 )
-from .call_function import LLM
+from ..llm import LLM
 from typing import Any
-from .get_prompt import FPrompt
-from .finite_state_machine import (
+from .prompt import FPrompt
+from ..fsm import (
     FSM,
     NumberFSM,
     IntegerFSM,
     StringFSM,
-    BooleanFSM
+    BooleanFSM,
+    Filter
 )
-from .vocab import Vocab
-from enum import Enum
-import json
-from pathlib import Path
-
-
-class TypeEval(Enum):
-    NUMBER = (
-        "numbers",
-        "number",
-        "num",
-        "float",
-        "floats",
-        "decimals",
-        "decimal"
-    )
-    INTEGER = (
-        "integers",
-        "integer",
-        "int"
-    )
-
-    BOOLEAN = (
-        "boolean",
-        "booleans",
-        "bool"
-    )
+from .type_eval import (
+    TypeEval,
+    is_boolean,
+    is_numeric,
+    cast_value,
+    separator_literal
+)
 
 
 class Constrained(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     definitions: list[Definition]
-    __model: LLM = PrivateAttr(default_factory=LLM)
-    __vocab: Vocab = PrivateAttr()
 
+    __model: LLM = PrivateAttr(default_factory=LLM)
     __max_token_repetition: int = PrivateAttr(default=3)
+    __filter: Filter = PrivateAttr()
 
     @model_validator(mode="after")
     def after_init(self) -> "Constrained":
-        path: str = self.__model.vocab_path()
-        self.__vocab = Vocab(vocab_path=Path(path))
+        self.__filter = Filter(
+            vocab=self.__model.get_vocab()
+        )
         return self
 
     def generate(self, calling: Calling) -> Result:
@@ -145,12 +127,12 @@ class Constrained(BaseModel):
             input_ids += val
 
             input_ids += self.__model.encode(
-                Constrained.separator_literal(
+                separator_literal(
                     last_param
                 )
             )
 
-            res[key] = self.__cast_value(self.__model.decode(val), ptype.type)
+            res[key] = cast_value(self.__model.decode(val), ptype.type)
 
         return res
 
@@ -160,16 +142,16 @@ class Constrained(BaseModel):
         param_type: str,
         is_last: bool
     ) -> list[int]:
-        if Constrained.is_numeric(param_type):
+        if is_numeric(param_type):
             fsm: FSM = (
                 IntegerFSM() if param_type in TypeEval.INTEGER.value
                 else NumberFSM()
             )
             return self.__field_numeric(
-                input_ids, fsm, Constrained.separator_literal(is_last)
+                input_ids, fsm, separator_literal(is_last)
             )
 
-        if Constrained.is_boolean(param_type):
+        if is_boolean(param_type):
             return self.__field_value(input_ids, BooleanFSM())
 
         open_ids: list[int] = self.__model.encode('"')
@@ -185,14 +167,14 @@ class Constrained(BaseModel):
         working_ids = list(input_ids)
 
         while True:
-            candidates: set[int] = self.__vocab.valid_token_ids(fsm, state)
+            candidates: set[int] = self.__filter.valid_token_ids(fsm, state)
 
             if not candidates:
                 raise ValueError("No candidates found")
 
             logits = self.__model.get_logits(working_ids)
             next_token = Constrained.max_token(logits, candidates)
-            token_text = self.__vocab.text(next_token)
+            token_text = self.__filter.text(next_token)
 
             if (
                 check_repetition(generated, next_token) >
@@ -229,7 +211,7 @@ class Constrained(BaseModel):
         working_ids = list(input_ids)
 
         while True:
-            candidates: set[int] = self.__vocab.valid_token_ids(fsm, state)
+            candidates: set[int] = self.__filter.valid_token_ids(fsm, state)
             accept: bool = fsm.is_valid(state)
 
             if not candidates and not accept:
@@ -247,7 +229,7 @@ class Constrained(BaseModel):
             if end_active and next_token == end_ids:
                 break
 
-            token_text = self.__vocab.text(next_token)
+            token_text = self.__filter.text(next_token)
             accepted = ""
             if token_text:
                 for c in token_text:
@@ -272,37 +254,6 @@ class Constrained(BaseModel):
     def __first_token_id(self, text: str) -> int | None:
         ids = self.__model.encode(text)
         return ids[0] if ids else None
-
-    def __cast_value(self, value: str, ptype: str) -> Any:
-        if Constrained.is_numeric(ptype):
-            return (
-                int(value) if ptype in TypeEval.INTEGER.value
-                else float(value)
-            )
-
-        if Constrained.is_boolean(ptype):
-            return value == "true"
-
-        return json.loads(f"{value}")
-
-    @staticmethod
-    def is_numeric(res: str) -> bool:
-        return (
-            res in (
-                *TypeEval.NUMBER.value,
-                *TypeEval.INTEGER.value
-            )
-        )
-
-    @staticmethod
-    def is_boolean(res: str) -> bool:
-        return (
-            res in TypeEval.BOOLEAN.value
-        )
-
-    @staticmethod
-    def separator_literal(last: bool) -> str:
-        return "}" if last else ","
 
     @staticmethod
     def max_token(logits: list[float], candidates: set[int]) -> int:

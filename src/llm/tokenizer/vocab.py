@@ -1,7 +1,6 @@
 from pathlib import Path
 import json
-from .finite_state_machine import FSM
-from pydantic import BaseModel, ConfigDict, model_validator, PrivateAttr
+from pydantic import BaseModel, ConfigDict, model_validator
 
 
 class VocabError(Exception):
@@ -12,7 +11,6 @@ class Vocab(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     vocab_path: Path
-    __grammar_cache: dict[tuple[type[FSM], int], set[int]] = PrivateAttr()
 
     @model_validator(mode="after")
     def after_init(self) -> "Vocab":
@@ -39,34 +37,10 @@ class Vocab(BaseModel):
                 f"{self.vocab_path!r} produce no tokens"
             )
 
-        self.__grammar_cache = {}
-
         return self
 
-    def valid_token_ids(self, fsm: FSM, state: int) -> set[int]:
-        cache_key = (type(fsm), state)
-        cache = self.__grammar_cache.get(cache_key)
-        if cache is not None:
-            return cache
-
-        valid: set[int] = set()
-        for token_id, token_text in self.__ids_to_text.items():
-            cursor: int = state
-            is_valid: bool = bool(token_text)  # if the token_text is not None
-            for c in token_text:
-                cursor = fsm.step(cursor, c)
-                if cursor == -1:
-                    is_valid = False
-                    break
-
-            if is_valid:
-                valid.add(token_id)
-
-        self.__grammar_cache[cache_key] = valid
-        return valid
-
-    def text(self, ids: int) -> str:
-        return self.__ids_to_text[ids]
+    def ids_to_text(self) -> dict[int, str]:
+        return self.__ids_to_text
 
     @staticmethod
     def normalize(text: str) -> str:

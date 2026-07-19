@@ -248,12 +248,19 @@ class Constrained(BaseModel):
                 break
 
             token_text = self.__vocab.text(next_token)
-            for c in token_text:
-                next_state = fsm.step(state, c)
-                if next_state == -1:
-                    raise ValueError("FSM State not accepted")
-                state = next_state
+            accepted = ""
+            if token_text:
+                for c in token_text:
+                    next_state = fsm.step(state, c)
+                    if next_state == -1:
+                        break
+                    accepted += c
+                    state = next_state
 
+            if not accepted:
+                break
+
+            next_token = self.__model.encode(accepted)[0]
             generated.append(next_token)
             working_ids.append(next_token)
 

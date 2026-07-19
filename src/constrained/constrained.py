@@ -10,7 +10,13 @@ from ..utils import (
 from .call_function import LLM
 from typing import Any
 from .get_prompt import FPrompt
-from .finite_state_machine import FSM, NumberFSM, IntegerFSM, StringFSM
+from .finite_state_machine import (
+    FSM,
+    NumberFSM,
+    IntegerFSM,
+    StringFSM,
+    BooleanFSM
+)
 from .vocab import Vocab
 from enum import Enum
 import json
@@ -162,6 +168,9 @@ class Constrained(BaseModel):
             return self.__field_numeric(
                 input_ids, fsm, Constrained.separator_literal(is_last)
             )
+
+        if Constrained.is_boolean(param_type):
+            return self.__field_value(input_ids, BooleanFSM())
 
         open_ids: list[int] = self.__model.encode('"')
         body_ids: list[int] = self.__field_value(

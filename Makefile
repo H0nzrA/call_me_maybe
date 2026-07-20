@@ -6,7 +6,7 @@
 #    By: trakotoz <trakotoz@student.42antananarivo  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/06/28 15:03:02 by trakotoz          #+#    #+#              #
-#    Updated: 2026/07/01 12:45:01 by trakotoz         ###   ########.fr        #
+#    Updated: 2026/07/20 09:02:09 by trakotoz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -120,4 +120,4 @@ tree		:
 pydoc		: install
 	@ $(URUN) pydocstyle $(SRC)
 
-.PHONY		: all check init install run debug clean fclean re lint lint-strict add remove tree
+.PHONY		: all check init install run debug clean fclean re lint lint-strict add remove tree pydoc

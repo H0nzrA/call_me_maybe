@@ -35,6 +35,7 @@ class Constrained(BaseModel):
 
     __model: LLM = PrivateAttr()
     __max_token_repetition: int = PrivateAttr(default=3)
+    __max_token_number: int = PrivateAttr(default=64)
     __filter: Filter = PrivateAttr()
 
     @model_validator(mode="after")
@@ -217,6 +218,9 @@ class Constrained(BaseModel):
         while True:
             candidates: set[int] = self.__filter.valid_token_ids(fsm, state)
             accept: bool = fsm.is_valid(state)
+
+            if len(generated) > self.__max_token_number:
+                break
 
             if not candidates and not accept:
                 raise ValueError(

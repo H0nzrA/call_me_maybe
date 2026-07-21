@@ -1,12 +1,12 @@
 from llm_sdk import Small_LLM_Model  # type: ignore
-from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, model_validator
+from pydantic import BaseModel, ConfigDict, PrivateAttr, model_validator
 from .tokenizer import Tokenizer
 
 
 class LLM(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    name: str = Field(default="openai-community/gpt2")
+    name: str
 
     __model: Small_LLM_Model = PrivateAttr()
     __tokenizer: Tokenizer = PrivateAttr()

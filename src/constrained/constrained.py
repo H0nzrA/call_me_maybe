@@ -30,14 +30,18 @@ from .type_eval import (
 class Constrained(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
+    model_name: str
     definitions: list[Definition]
 
-    __model: LLM = PrivateAttr(default_factory=LLM)
+    __model: LLM = PrivateAttr()
     __max_token_repetition: int = PrivateAttr(default=3)
     __filter: Filter = PrivateAttr()
 
     @model_validator(mode="after")
     def after_init(self) -> "Constrained":
+        self.__model = LLM(
+            name=self.model_name
+        )
         self.__filter = Filter(
             vocab=self.__model.get_vocab()
         )

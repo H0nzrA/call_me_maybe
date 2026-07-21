@@ -6,7 +6,7 @@ from .tokenizer import Tokenizer
 class LLM(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    model_choice: str = Field(default="Qwen/Qwen3-0.6B")
+    name: str = Field(default="openai-community/gpt2")
 
     __model: Small_LLM_Model = PrivateAttr()
     __tokenizer: Tokenizer = PrivateAttr()
@@ -14,7 +14,7 @@ class LLM(BaseModel):
     @model_validator(mode="after")
     def after_init(self) -> "LLM":
         self.__model = Small_LLM_Model(
-            model_name=self.model_choice
+            model_name=self.name
         )
         self.__tokenizer = Tokenizer(
             vocab_path=self.vocab_path()

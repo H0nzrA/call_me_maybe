@@ -16,9 +16,17 @@ class Answer(BaseModel):
 
     def generate(self) -> None:
         self.__display.introduction()
+        model_name: str = self.__display.menu(
+            "Small LLM Model to use",
+            [
+                "Qwen/Qwen3-0.6B",
+                "HuggingFaceTB/SmolLM2-360M-Instruct"
+            ]
+        )
 
         parsed_data: ParsedData = self.__get_data()
         gen: Constrained = Constrained(
+            model_name=model_name,
             definitions=parsed_data.definitions
         )
 

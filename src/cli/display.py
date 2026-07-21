@@ -4,8 +4,8 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 
 
-def print_flush(s: str) -> None:
-    print(s, flush=True)
+def print_flush(*args: Any, **kwargs: Any) -> None:
+    print(*args, **kwargs, flush=True)
 
 
 class Display(BaseModel):
@@ -168,3 +168,23 @@ class Display(BaseModel):
         res += text
         res += Syntax.RESET.value
         print_flush(res)
+
+    def menu(self, title: str, choices: list[str]) -> str:
+        print_flush(title)
+
+        for i, val in enumerate(choices):
+            print_flush(f"({i + 1}) - {val}", end="\n")
+
+        while True:
+            try:
+                n: int = int(input("Choices: "))
+                if n <= 0 or n > len(choices):
+                    raise ValueError(f"Choice out of range: {n}")
+
+                res: str = choices[n - 1]
+                self.valid_print(f"Your choices: {res}")
+                return res
+
+            except ValueError as e:
+                self.invalid_print(str(e))
+                pass

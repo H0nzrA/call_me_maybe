@@ -26,8 +26,8 @@ if __name__ == "__main__":
         program: Program = Program()
         program.run()
 
+    except (KeyboardInterrupt, EOFError):
+        print("\n\n=== Program Stopped ===\n\n")
+
     except Exception as e:
         print(f"Caught exception: {e}")
-
-    except KeyboardInterrupt:
-        print("=== Program Stopped ===")

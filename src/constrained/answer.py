@@ -6,6 +6,7 @@ from ..utils import Parsing, ParsedData, PathData, Result
 from ..cli import Display
 import time
 import json
+import sys
 
 
 class Answer(BaseModel):
@@ -25,6 +26,8 @@ class Answer(BaseModel):
         )
 
         parsed_data: ParsedData = self.__get_data()
+        self.__evaluate_data(parsed_data)
+
         gen: Constrained = Constrained(
             model_name=model_name,
             definitions=parsed_data.definitions
@@ -82,3 +85,19 @@ class Answer(BaseModel):
             return
 
         self.__display.valid_print("Output valid JSON confirm")
+
+    def __evaluate_data(self, data: ParsedData) -> None:
+        valid: bool = True
+        if not data.definitions:
+            self.__display.invalid_print(
+                "Function Definition Empty. Can't continue the process!"
+            )
+            valid = False
+        if not data.callings:
+            self.__display.invalid_print(
+                "Function Calling Empty. Can't continue the process!"
+            )
+            valid = False
+
+        if not valid:
+            sys.exit(1)

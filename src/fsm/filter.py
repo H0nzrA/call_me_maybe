@@ -1,5 +1,5 @@
 from ..fsm import FSM
-from pydantic import BaseModel, ConfigDict, model_validator, PrivateAttr
+from pydantic import BaseModel, ConfigDict, PrivateAttr
 
 
 class FilterError(Exception):
@@ -10,13 +10,9 @@ class Filter(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     vocab: dict[int, str]
-    __grammar_cache: dict[tuple[type[FSM], int], set[int]] = PrivateAttr()
-
-    @model_validator(mode="after")
-    def after_init(self) -> "Filter":
-        self.__grammar_cache = {}
-
-        return self
+    __grammar_cache: dict[
+        tuple[type[FSM], int], set[int]
+    ] = PrivateAttr(default={})
 
     def valid_token_ids(self, fsm: FSM, state: int) -> set[int]:
         cache_key = (type(fsm), state)

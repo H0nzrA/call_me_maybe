@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+from functools import lru_cache
 
 
 class VocabError(Exception):
@@ -11,12 +12,10 @@ class Vocab(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     vocab_path: Path
-    bytes_to_unicode: dict[int, str] = Field(default={})
 
     @model_validator(mode="after")
     def after_init(self) -> "Vocab":
         self.__ids_to_text: dict[int, str] = {}
-        self.bytes_to_unicode = Vocab.get_bytes_to_unicode()
 
         try:
             with self.vocab_path.open("r") as f:
@@ -46,6 +45,7 @@ class Vocab(BaseModel):
 
     def text(self, idx: int) -> str:
         return self.__ids_to_text[idx]
+
 
     @staticmethod
     def get_bytes_to_unicode() -> dict[int, str]:

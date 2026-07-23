@@ -1,6 +1,6 @@
 from pathlib import Path
 import json
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, model_validator
 from functools import lru_cache
 
 
@@ -13,15 +13,18 @@ class Vocab(BaseModel):
 
     vocab_path: Path
 
-    @model_validator(mode="after")
+    __ids_to_token: dict[int, str] = PrivateAttr(default_factory=dict)
+    __token_to_ids: dict[str, int] = PrivateAttr(default_factory=dict)
+
     def after_init(self) -> "Vocab":
-        self.__ids_to_text: dict[int, str] = {}
+        self.__ids_to_token = {}
+        self.__token_to_ids = {}
 
         try:
             with self.vocab_path.open("r") as f:
                 vocab = json.load(f)
 
-                self.__ids_to_text = {
+                self.__ids_to_token = {
                     token_id: token_text
                     for token_text, token_id in vocab.items()
                 }
@@ -32,20 +35,27 @@ class Vocab(BaseModel):
                 f"{self.vocab_path!r}: {e}"
             )
 
-        if not self.__ids_to_text:
+        if not self.__ids_to_token:
             raise VocabError(
                 "Vocab file "
                 f"{self.vocab_path!r} produce no tokens"
             )
 
+        self.__token_to_ids = {
+            v: k
+            for k, v in self.__ids_to_token.items()
+        }
+
         return self
 
-    def ids_to_text(self) -> dict[int, str]:
-        return self.__ids_to_text
+    def get_ids_to_token(self) -> dict[int, str]:
+        return self.__ids_to_token
 
     def text(self, idx: int) -> str:
-        return self.__ids_to_text[idx]
+        return self.__ids_to_token[idx]
 
+    def ids(self, text: str) -> int:
+        return self.__token_to_ids[text]
 
     @staticmethod
     def get_bytes_to_unicode() -> dict[int, str]:

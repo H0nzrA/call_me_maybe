@@ -17,14 +17,14 @@ class LLM(BaseModel):
             model_name=self.name
         )
         self.__tokenizer = Tokenizer(
-            vocab_path=self.vocab_path()
+            vocab_path=self.vocab_path(),
+            merge_path=self.__model.get_path_to_merges_file()
         )
 
         return self
 
     def encode(self, text: str) -> list[int]:
-        # return list(self.__model.encode(text)[0].tolist())
-        return self.__tokenizer.encode(text)
+        return list(self.__model.encode(text)[0].tolist())
 
     def decode(self, ids: list[int]) -> str:
         return self.__tokenizer.decode(ids)

@@ -1,5 +1,4 @@
 from pydantic import BaseModel, ConfigDict, PrivateAttr
-
 from ..utils import FileManagement
 from .constrained import Constrained
 from ..utils import Parsing, ParsedData, PathData, Result

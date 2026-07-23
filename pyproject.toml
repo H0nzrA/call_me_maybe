@@ -24,3 +24,7 @@ members = [
 
 [tool.uv.sources]
 llm-sdk = { workspace = true }
+
+[[tool.mypy.overrides]]
+module = ["regex"]
+ignore_missing_imports = true

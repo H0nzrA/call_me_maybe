@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, PrivateAttr, model_validator
 from .vocab import Vocab
 from pathlib import Path
 import regex
@@ -9,26 +9,35 @@ class Tokenizer(BaseModel):
 
     vocab_path: str
     merge_path: str
+    __byte_unicode: dict[int, str] = PrivateAttr(default_factory=dict)
+    __byte_encoder: dict[str, int] = PrivateAttr(default_factory=dict)
 
     @model_validator(mode="after")
     def after_init(self) -> "Tokenizer":
         self.__vocab = Vocab(vocab_path=Path(self.vocab_path))
-        self.__byte_unicode: dict[int, str] = self.__vocab.get_bytes_to_unicode()
-        self.__byte_encoder: dict[str, int] = {
+        self.__byte_unicode = self.__vocab.get_bytes_to_unicode()
+        self.__byte_encoder = {
             v: k
             for k, v in self.__byte_unicode.items()
         }
+
         self.__split_regex = regex.compile(
             r"""
-            (?i:'s|'t|'re|'ve|'m|'ll|'d)|
-            [^\\r\\n\\p{L}\\p{N}]?\\p{L}+|
-            \\p{N}|
-            [^\\s\\p{L}\\p{N}]+[\\r\\n]*|
-            \\s*[\\r\\n]+|
-            \\s+(?!\\S)
-            |\\s+
+            (?i:'s|'t|'re|'ve|'m|'ll|'d)
+            |
+            [^\r\n\p{L}\p{N}]?\p{L}+
+            |
+            \p{N}
+            |
+            \ ?[^\s\p{L}\p{N}]+[\r\n]*
+            |
+            \s*[\r\n]+
+            |
+            \s+(?!\S)
+            |
+            \s+
             """,
-            regex.VERBOSE
+            regex.VERBOSE,
         )
 
         self.__merge_data: dict[tuple[str, str], int] = {}

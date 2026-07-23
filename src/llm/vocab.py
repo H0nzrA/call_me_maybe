@@ -1,7 +1,6 @@
 from pathlib import Path
 import json
-from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, model_validator
-from functools import lru_cache
+from pydantic import BaseModel, ConfigDict, PrivateAttr, model_validator
 
 
 class VocabError(Exception):
@@ -16,6 +15,7 @@ class Vocab(BaseModel):
     __ids_to_token: dict[int, str] = PrivateAttr(default_factory=dict)
     __token_to_ids: dict[str, int] = PrivateAttr(default_factory=dict)
 
+    @model_validator(mode="after")
     def after_init(self) -> "Vocab":
         self.__ids_to_token = {}
         self.__token_to_ids = {}

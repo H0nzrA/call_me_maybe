@@ -24,7 +24,7 @@ class LLM(BaseModel):
         return self
 
     def encode(self, text: str) -> list[int]:
-        return list(self.__model.encode(text)[0].tolist())
+        return self.__tokenizer.encode(text)
 
     def decode(self, ids: list[int]) -> str:
         return self.__tokenizer.decode(ids)

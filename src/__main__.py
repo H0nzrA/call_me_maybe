@@ -1,33 +1,32 @@
-from .cli import Argument, Display
+"""
+Command-line entry point for the Call-Me-Maybe application.
+
+This module initializes the application and starts the function
+calling pipeline.
+"""
+
+from .cli import Argument
 from .constrained import Answer
 from .utils import timer_func
-from pydantic import BaseModel, PrivateAttr, ConfigDict
 
 
-class Program(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+@timer_func
+def main() -> None:
+    """Parse arguments and generate the constrained answer."""
+    args: Argument = Argument()
+    answer = Answer(
+        io_path=args.get_io_file()
+    )
 
-    __args: Argument = PrivateAttr()
-    __answer: Answer = PrivateAttr()
-
-    @timer_func
-    def run(self) -> None:
-        self.__args = Argument()
-        self.__answer = Answer(
-            io_path=self.__args.get_io_file(),
-        )
-
-        self.__answer.generate()
+    answer.generate()
 
 
 if __name__ == "__main__":
     try:
-        display = Display()
-        program: Program = Program()
-        program.run()
+        main()
 
     except (KeyboardInterrupt, EOFError):
         print("\n\n=== Program Stopped ===\n\n")
 
     except Exception as e:
-        print(f"Caught exception: {e}")
+        print(f"Unexpected Error: {e}")

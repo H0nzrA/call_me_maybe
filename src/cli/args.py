@@ -1,3 +1,10 @@
+"""
+Command-line argument parser.
+
+Provides classes for parsing and validating the command-line
+argument and resolving the application's input and output files.
+"""
+
 import sys
 from collections.abc import Iterator
 from enum import Enum
@@ -7,10 +14,14 @@ from ..utils import PathData
 
 
 class ArgsError(Exception):
+    """Raised when command-line arguments are invalid."""
+
     pass
 
 
 class IOFile(BaseModel):
+    """Store the path of input and output files."""
+
     model_config = ConfigDict(extra="forbid")
 
     definition: str
@@ -19,6 +30,8 @@ class IOFile(BaseModel):
 
 
 class IOFlags(Enum):
+    """Supported command-line flags for file paths."""
+
     definition = [
         "--functions_definition",
         "-d"
@@ -34,6 +47,13 @@ class IOFlags(Enum):
 
 
 class Argument(BaseModel):
+    """
+    Parse and validate the application command-line argument.
+
+    Stores the resolved input and output file paths and provide access
+    to them as a `PathData` instance.
+    """
+
     model_config = ConfigDict(extra="forbid")
 
     io_file: IOFile = Field(
@@ -53,10 +73,22 @@ class Argument(BaseModel):
 
     @model_validator(mode="after")
     def after_init(self) -> "Argument":
+        """Parse the command-line argument after model initialization."""
         self.__parse_arguments()
         return self
 
     def __parse_arguments(self) -> None:
+        """
+        Parse and validate command-line arguments.
+
+        Update the input and output file paths according to the
+        provided command-line flags.
+
+        Raises:
+            ArgsError: If an unknown flag is encountered, if a flag
+            is missing its value, if a flag is followed by another
+            flag.
+        """
         args: list[str] = sys.argv[1::]
         it: Iterator[str] = iter(args)
 
@@ -79,6 +111,13 @@ class Argument(BaseModel):
                 raise ArgsError(f"No value given for flag {arg!r}")
 
     def get_io_file(self) -> PathData:
+        """
+        Return the resolved input and output file paths.
+
+        Return:
+            A `PathData` instance containing the definition,
+            calling, and result file paths.
+        """
         return PathData(
             definition=Path(self.io_file.definition),
             calling=Path(self.io_file.calling),

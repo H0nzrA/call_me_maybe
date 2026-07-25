@@ -1,3 +1,10 @@
+"""
+Application orchestration.
+
+Coordinated data loading, constrained generation, result
+serealization and output validation.
+"""
+
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 from ..utils import FileManagement
 from .constrained import Constrained
@@ -9,12 +16,21 @@ import sys
 
 
 class Answer(BaseModel):
+    """
+    Exectute the complete function calling pipeline.
+
+    Loads the input data, initialize the constrained generator,
+    processes each prompt one by one, write the generated results,
+    and validate the output file.
+    """
+
     model_config = ConfigDict(extra="forbid")
 
     io_path: PathData
     __display: Display = PrivateAttr(default_factory=Display)
 
     def generate(self) -> None:
+        """Run the complete function calling pipeline."""
         self.__display.introduction()
         model_name: str = self.__display.menu(
             "Small LLM Model to use",
@@ -54,19 +70,30 @@ class Answer(BaseModel):
             except Exception as e:
                 self.__display.problem(c.prompt, str(e))
                 fail.append(c.prompt)
-                pass
 
         self.__display.full_stats(total, fail)
 
         self.__validate_output_json()
 
     def __get_data(self) -> ParsedData:
+        """
+        Load and parse the input files.
+
+        Return:
+            The parsed function definition and calling requests.
+        """
         pars: Parsing = Parsing(
             path_data=self.io_path
         )
         return pars.get_file_content()
 
     def __validate_output_json(self) -> None:
+        """
+        Validate that the generated output file contains valid JSON.
+
+        Display an appropriate message is the file is missing or
+        contains invalid JSON.
+        """
         try:
             with self.io_path.result.open("r") as f:
                 _ = json.load(f)
@@ -86,6 +113,16 @@ class Answer(BaseModel):
         self.__display.valid_print("Output valid JSON confirm")
 
     def __evaluate_data(self, data: ParsedData) -> None:
+        """
+        Validate the parse input data before generation.
+
+        Args:
+            data (ParsedData): Parse input data, definition and calling.
+
+        Raises:
+            SystemExit: If the function definition or calling requests
+            are empty.
+        """
         valid: bool = True
         if not data.definitions:
             self.__display.invalid_print(

@@ -1,3 +1,11 @@
+"""
+Constrained function calling generation.
+
+Provides the constrained decoding pipeline used to generate
+function name, function parameters value conform to the
+provided function definitions.
+"""
+
 from pydantic import BaseModel, ConfigDict, PrivateAttr, model_validator
 from ..utils import (
     Definition,
@@ -9,7 +17,7 @@ from ..utils import (
 )
 from ..llm import LLM
 from typing import Any
-from .prompt import FPrompt
+from .prompt import function_prompt, parameter_prompt
 from ..fsm import (
     FSM,
     NumberFSM,
@@ -28,6 +36,14 @@ from .type_eval import (
 
 
 class Constrained(BaseModel):
+    """
+    Generate structured function calls using Constrained Decoding.
+
+    This class selects the most approprite function for a prompt
+    and generates valid parameter values by restricting the model's
+    output with a finite-state machines.
+    """
+
     model_config = ConfigDict(extra="forbid")
 
     model_name: str
@@ -40,6 +56,7 @@ class Constrained(BaseModel):
 
     @model_validator(mode="after")
     def after_init(self) -> "Constrained":
+        """Initialize the language model and token filter."""
         self.__model = LLM(
             name=self.model_name
         )
@@ -49,6 +66,16 @@ class Constrained(BaseModel):
         return self
 
     def generate(self, calling: Calling) -> Result:
+        """
+        Generate a constrained function call for a prompt.
+
+        Args:
+            calling (Calling): Function Calling request.
+
+        Return:
+            The Generate function call and its parameter in
+            'Result' instance.
+        """
         definition_dict: dict[str, Definition] = {
             d.name: d
             for d in self.definitions
@@ -75,7 +102,18 @@ class Constrained(BaseModel):
         prompt: str,
         big_dict: dict[str, Definition]
     ) -> Definition:
-        full_prompt: str = FPrompt.function_prompt(
+        """
+        Generate the function name matchin the input prompt.
+
+        Args:
+            prompt (str): User prompt.
+            big_dict (dict[str, Definition]): Mapping the function name
+            to their definition.
+
+        Returns:
+            The selected function definition.
+        """
+        full_prompt: str = function_prompt(
             prompt,
             self.definitions
         )
@@ -112,7 +150,17 @@ class Constrained(BaseModel):
         prompt: str,
         definition: Definition
     ) -> dict[str, Any]:
-        full_prompt: str = FPrompt.parameter_prompt(prompt, definition)
+        """
+        Generated all parameter value for a function.
+
+        Args:
+            prompt (str): User prompt.
+            definition (Definition): Selected function defintion.
+
+        Returns:
+            A mapping of parameter name to generated value.
+        """
+        full_prompt: str = parameter_prompt(prompt, definition)
 
         input_ids: list[int] = self.__model.encode(full_prompt)
         input_ids += self.__model.encode("{")
@@ -147,6 +195,17 @@ class Constrained(BaseModel):
         param_type: str,
         is_last: bool
     ) -> list[int]:
+        """
+        Generate a parameter value according to its type.
+
+        Args:
+            input_ids (list[int]): Prompt token IDs.
+            param_type (str): Expected parameter type.
+            is_last (bool): Whether this is the final parameter.
+
+        Return:
+            The generated token IDs respecting the parameter value.
+        """
         if is_numeric(param_type):
             fsm: FSM = (
                 IntegerFSM() if param_type in TypeEval.INTEGER.value
@@ -167,6 +226,23 @@ class Constrained(BaseModel):
         return open_ids + body_ids
 
     def __field_value(self, input_ids: list[int], fsm: FSM) -> list[int]:
+        """
+        Generate the constrained non-numeric value.
+
+        The generated token is restricted by the finite-state
+        machine untile a terminal state is reached.
+
+        Args:
+            input_ids (list[int]): Prompt token IDs.
+            fsm (FSM): Finite-State Machine defining valid values.
+
+        Return:
+            The generated token IDs.
+
+        Raises:
+            ValueError: If no valid token can be generated,
+            if the FSM reach an invalid transition.
+        """
         state = fsm.start()
         generated: list[int] = []
         working_ids = list(input_ids)
@@ -210,6 +286,20 @@ class Constrained(BaseModel):
         fsm: FSM,
         next_literal: str
     ) -> list[int]:
+        """
+        Generate the constrained numeric value.
+
+        Args:
+            input_ids (list[int]): Prompt token IDs.
+            fsm (FSM): Finite-State Machine defining the valid numeric values.
+            next_literal (str): Litteral marking the end of the value.
+
+        Returns:
+            The generated numeric token IDs.
+
+        Raises:
+            ValueError: If no valid numeric value can be generated.
+        """
         state = fsm.start()
         generated: list[int] = []
         end_ids = self.__first_token_id(next_literal)
@@ -260,11 +350,31 @@ class Constrained(BaseModel):
         return generated
 
     def __first_token_id(self, text: str) -> int | None:
+        """
+        Return the first token of a text.
+
+        Args:
+            text (str): Text to tokenized.
+
+        Returns:
+            The first token Ids, or ``None`` if the text produces no
+            tokens.
+        """
         ids = self.__model.encode(text)
         return ids[0] if ids else None
 
     @staticmethod
     def max_token(logits: list[float], candidates: set[int]) -> int:
+        """
+        Select the highest-scoring token among the candidates.
+
+        Args:
+            logits (list[float]): Model logits.
+            candidates (set[int]): Allowed token ids.
+
+        Returns:
+            The selected token IDs.
+        """
         for ids in range(len(logits)):
             if ids not in candidates:
                 logits[ids] = float("-inf")

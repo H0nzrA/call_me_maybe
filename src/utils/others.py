@@ -13,6 +13,23 @@ from .syntax import Syntax
 from datetime import timedelta
 
 
+def application_usage() -> None:
+    """Display application runing expression."""
+    res: str = Syntax.BOLD.value + Syntax.BLUE.value
+    res += "\n\n--- Usage ---\n\n"
+    res += Syntax.RESET.value
+
+    res += f"{Syntax.YELLOW.value}- With uv: {Syntax.RESET.value}"
+    res += "uv run python -m src --input <function calling file> "
+    res += "--functions_definition <definition file> --output <output file>\n"
+
+    res += f"{Syntax.YELLOW.value}- With only python: {Syntax.RESET.value}"
+    res += "python/python3 -m src --input <function calling file> "
+    res += "--functions_definition <definition file> --output <output file>\n"
+
+    print(res, flush=True)
+
+
 def timer_func(func: Callable[..., Any]) -> Callable[..., Any]:
     """
     Measure and display the execution time of a function.

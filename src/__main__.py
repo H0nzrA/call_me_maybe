@@ -5,9 +5,9 @@ This module initializes the application and starts the function
 calling pipeline.
 """
 
-from .cli import Argument
+from .cli import Argument, ArgsError
 from .constrained import Answer
-from .utils import timer_func
+from .utils import timer_func, application_usage
 
 
 @timer_func
@@ -24,6 +24,10 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
+
+    except ArgsError as e:
+        print(f"Caught Argument Error: {e}")
+        application_usage()
 
     except (KeyboardInterrupt, EOFError):
         print("\n\n=== Program Stopped ===\n\n")

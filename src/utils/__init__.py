@@ -8,7 +8,12 @@ and terminal utilities use throughout the application.
 from .file_management import clear_file, write_json, write_full_json
 from .parsing import Parsing
 from .models import Definition, Calling, Result, ParsedData, PathData, Type
-from .others import timer_func, check_repetition, remove_repetition
+from .others import (
+    timer_func,
+    check_repetition,
+    remove_repetition,
+    application_usage
+)
 from .syntax import Syntax
 
 
@@ -26,5 +31,6 @@ __all__: list[str] = [
     "check_repetition",
     "remove_repetition",
     "Syntax",
-    "Type"
+    "Type",
+    "application_usage"
 ]

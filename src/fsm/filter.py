@@ -1,12 +1,22 @@
+"""
+Vocabulary filtering utilities.
+
+Provides token filtering utilities base on the finite-state machines
+for constrained decoding.
+"""
+
 from ..fsm import FSM
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 
 
-class FilterError(Exception):
-    pass
-
-
 class Filter(BaseModel):
+    """
+    Filter vocabulay tokens using finite-state machines.
+
+    Caches valid token sets for each FSM type and state to
+    avoid recomputing grammar constraints.
+    """
+
     model_config = ConfigDict(extra="forbid")
 
     vocab: dict[int, str]
@@ -15,6 +25,17 @@ class Filter(BaseModel):
     ] = PrivateAttr(default={})
 
     def valid_token_ids(self, fsm: FSM, state: int) -> set[int]:
+        """
+        Return the token IDs accepted by the finite-state machine.
+
+        Args:
+            fsm (FSM): Finite-state Machine used for validation.
+            state (int): Current FSM state.
+
+        Returns:
+            The set of token IDs that produces valid transition from
+            the given state.
+        """
         cache_key = (type(fsm), state)
         cache = self.__grammar_cache.get(cache_key)
         if cache is not None:
@@ -37,4 +58,13 @@ class Filter(BaseModel):
         return valid
 
     def text(self, ids: int) -> str:
+        """
+        Return the text associated with the token IDs.
+
+        Args:
+            ids (int): Token identifier.
+
+        Returns:
+            The corresponding token text.
+        """
         return self.vocab[ids]

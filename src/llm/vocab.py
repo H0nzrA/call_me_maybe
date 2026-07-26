@@ -1,13 +1,29 @@
+"""
+Vocabulary management.
+
+Loads the model vocabulary and provides mapping between token
+IDs and their textual representations.
+"""
+
 from pathlib import Path
 import json
 from pydantic import BaseModel, ConfigDict, PrivateAttr, model_validator
 
 
 class VocabError(Exception):
+    """Raised when vocabulary cannot be load or is invalid."""
+
     pass
 
 
 class Vocab(BaseModel):
+    """
+    Vocabulary used by the tokenizer.
+
+    Loads vocabulary file and provides bidirectional mappings
+    between token IDs and token strings.
+    """
+
     model_config = ConfigDict(extra="forbid")
 
     vocab_path: Path
@@ -17,6 +33,16 @@ class Vocab(BaseModel):
 
     @model_validator(mode="after")
     def after_init(self) -> "Vocab":
+        """
+        Load and validate the vocabulary.
+
+        Build the token-to-ID and ID-to-token mapping from the
+        vocabulary file.
+
+        Raised:
+            VocabError: If the vocabulary file is invalid of contains
+                no token.
+        """
         self.__ids_to_token = {}
         self.__token_to_ids = {}
 
@@ -49,16 +75,46 @@ class Vocab(BaseModel):
         return self
 
     def get_ids_to_token(self) -> dict[int, str]:
+        """
+        Return the vocabulary mapping from token IDs to token strings.
+
+        Returns:
+            A mapping from token IDs to token strings.
+        """
         return self.__ids_to_token
 
     def text(self, idx: int) -> str:
+        """
+        Return the text associated with the token ID.
+
+        Args:
+            idx (int): Token ID.
+
+        Returns:
+            The corresponding token string.
+        """
         return self.__ids_to_token[idx]
 
     def ids(self, text: str) -> int:
+        """
+        Return the token ID associated with a token string.
+
+        Args:
+            text (str): Token string.
+
+        Returns:
+            The corresponding token ID.
+        """
         return self.__token_to_ids[text]
 
     @staticmethod
     def get_bytes_to_unicode() -> dict[int, str]:
+        """
+        Build the byte-to-Unicode mapping used by byte-level BPE.
+
+        Returns:
+            A mapping from byte values to Unicode characters.
+        """
         all_char: list[int] = (
             list(range(ord("!"), ord("~") + 1)) +
             list(range(ord("¡"), ord("¬") + 1)) +

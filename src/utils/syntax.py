@@ -1,7 +1,21 @@
+"""
+ANSI terminal formatting codes.
+
+Defined ANSI escape sequences for text styling, colors,
+and cursor control used by the command-line interface.
+"""
+
 from enum import Enum
 
 
 class Syntax(Enum):
+    """
+    ANSI escape sequences for terminal formatting.
+
+    Provides constants for text styles, colors,
+    screen clearing and cursor movement.
+    """
+
     RESET = "\033[0m"
     CLEAR = "\033[H\033[J"
     CLEAR_LINE = "\033[2K"

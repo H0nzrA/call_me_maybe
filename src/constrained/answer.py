@@ -6,7 +6,7 @@ serealization and output validation.
 """
 
 from pydantic import BaseModel, ConfigDict, PrivateAttr
-from ..utils import FileManagement
+from ..utils import clear_file, write_json
 from .constrained import Constrained
 from ..utils import Parsing, ParsedData, PathData, Result
 from ..cli import Display
@@ -51,7 +51,7 @@ class Answer(BaseModel):
         total: int = len(parsed_data.callings)
         fail: list[str] = []
 
-        FileManagement.clear_file(self.io_path.result)
+        clear_file(self.io_path.result)
         print("\n")
         for i, c in enumerate(parsed_data.callings):
             try:
@@ -61,7 +61,7 @@ class Answer(BaseModel):
                 result: Result = gen.generate(c)
                 end: float = time.perf_counter()
 
-                FileManagement.write_json(
+                write_json(
                     path=self.io_path.result,
                     data=result
                 )

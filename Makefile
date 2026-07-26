@@ -6,7 +6,7 @@
 #    By: trakotoz <trakotoz@student.42antananarivo  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/06/28 15:03:02 by trakotoz          #+#    #+#              #
-#    Updated: 2026/07/20 09:02:09 by trakotoz         ###   ########.fr        #
+#    Updated: 2026/07/26 23:50:58 by trakotoz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -120,4 +120,15 @@ tree		:
 pydoc		: install
 	@ $(URUN) pydocstyle $(SRC)
 
-.PHONY		: all check init install run debug clean fclean re lint lint-strict add remove tree pydoc
+help:
+	@ echo "$(C_BLUE)Usage: make [target] $(C_RESET)"
+	@ echo "$(C_GREEN)make install$(C_RESET)        Install all the dependencies"
+	@ echo "$(C_GREEN)make run$(C_RESET)            Run the Applications"
+	@ echo "$(C_GREEN)make lint$(C_RESET)           Run flake8 and mypy (standard version)"
+	@ echo "$(C_GREEN)make lint-strict$(C_RESET)    Run flake8 and mypy (strict version)"
+	@ echo "$(C_GREEN)make debug$(C_RESET)          Run the Applications under ipdb debugger"
+	@ echo "$(C_GREEN)make clean$(C_RESET)          Remove python and mypy cache"
+	@ echo "$(C_GREEN)make fclean$(C_RESET)         clean + remove virtualenv/dist"
+	@ echo "$(C_GREEN)make re$(C_RESET)             fclean + install (rebuild of the project)"
+
+.PHONY		: all check init install run debug clean fclean re lint lint-strict add remove tree pydoc help

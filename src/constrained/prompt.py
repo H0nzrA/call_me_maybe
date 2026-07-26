@@ -1,3 +1,10 @@
+"""
+Prompt generation utilities.
+
+Provides helper function for building prompt use during
+constrained function and parameter generation.
+"""
+
 from ..utils import Definition
 
 
@@ -5,6 +12,17 @@ def function_prompt(
     original_prompt: str,
     definitions: list[Definition]
 ) -> str:
+    """
+    Build the prompt used to select the target function.
+
+    Args:
+        original_prompt (str): User's input prompt.
+        definitions (list[Definition]): Avaliable function definitions.
+
+    Returns:
+        A prompt instructing the language model to choose the most
+        appropriate function.
+    """
     res: str = ""
     func_dict = {
         d.name: d.description
@@ -27,8 +45,19 @@ def parameter_prompt(
     original_prompt: str,
     definition: Definition,
 ) -> str:
+    """
+    Build the prompt used to generate function paramters.
+
+    Args:
+        original_prompt (str): User's input prompt.
+        definitions (Definition): Selected function definition.
+
+    Returns:
+        A prompt instructing the language model to extract the
+        parameter value for the selected function.
+    """
     params: str = "\n".join(
-        f'- "{name}": {ptype.type}\n'
+        f'- "{name}": {ptype.type}'
         for name, ptype in definition.parameters.items()
     )
 

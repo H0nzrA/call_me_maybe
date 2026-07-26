@@ -151,7 +151,7 @@ class Constrained(BaseModel):
         definition: Definition
     ) -> dict[str, Any]:
         """
-        Generated all parameter value for a function.
+        Generate all parameter value for a function.
 
         Args:
             prompt (str): User prompt.

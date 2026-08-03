@@ -6,7 +6,7 @@
 #    By: trakotoz <trakotoz@student.42antananarivo  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/06/28 15:03:02 by trakotoz          #+#    #+#              #
-#    Updated: 2026/07/26 23:50:58 by trakotoz         ###   ########.fr        #
+#    Updated: 2026/08/03 14:41:07 by trakotoz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,10 +60,10 @@ init		: check
 		echo "$(C_GREEN)-- Virtual environment created: $(VENV)$(C_RESET)"; \
 	fi
 	@ if [ ! -f $(CONFIG_FILE) ]; then \
-		$(UV) init . --name $(PROJECT); \
-		echo "$(C_GREEN)$(PROJECT)-- Project initialized successfully.$(C_RESET)"; \
+		$(UV) init . --name $(NAME); \
+		echo "$(C_GREEN)-- Project initialized successfully.$(C_RESET)"; \
 	else \
-		echo "$(C_BLUE)$(PROJECT)-- Project already initialized.$(C_RESET)"; \
+		echo "$(C_BLUE)-- Project already initialized.$(C_RESET)"; \
 	fi
 
 install		: init
